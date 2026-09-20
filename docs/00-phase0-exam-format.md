@@ -1,6 +1,11 @@
 # Phase 0 — Exam format research & the source-access blocker
 
-**Date:** 20 Sep 2026 · **Status:** Reported, awaiting your decisions
+**Date:** 20 Sep 2026 · **Status:** Reported; §1 and §5 partly SUPERSEDED
+
+> **Update — a dataset arrived after this was written.** `docs/07-content-assessment.md` §5
+> carries a department-page-confirmed format for **Telangana**, which publishes the identical
+> bank. It resolves the pass-mark question below in favour of **12**, and casts doubt on the
+> per-question timing model. Read that section alongside this one.
 **Deliverables:** `src/content/exam-config.json`, `src/content/exam-config.schema.json`, gate `G-CONFIG`
 
 ---
@@ -158,7 +163,7 @@ The one artifact that closes T1. Ten minutes of attention during the real test.
 |---|---|---|---|
 | 1 | How many questions in the paper? | `questionCount` | `20` *(guess)* |
 | 2 | How many correct to pass? Ask for the **number**, not the percentage. | `passMark` | `12` *(contested — could be 16)* |
-| 3 | One clock for the paper, or a clock per question? | `timing.mode` | `per-question` *(guess)* |
+| 3 | 🔴 **One clock for the paper, or a clock per question?** Telangana's confirmed format is **10 minutes for the whole paper** — check whether AP matches. **Highest-value question on this list.** | `timing.mode` | `per-question` *(now contradicted — see 07 §5)* |
 | 4 | If per-question: how many seconds? Time one on your phone. | `timing.secondsPerQuestion` | `30` *(guess)* |
 | 5 | **Can you go back to a previous question?** Try it. | `allowBackNavigation` | `false` *(no evidence)* |
 | 6 | Is there a Skip button? | `allowSkip` | `false` *(guess)* |
@@ -230,9 +235,16 @@ G-CONFIG PASS — 20 questions, 12 to pass (60%), per-question,
 
 ---
 
-## 5. One recommendation
+## 5. One recommendation — ~~consider `passMark: 16`~~ WITHDRAWN
 
-**Consider shipping `passMark: 16` rather than `12` until you have stood in the RTO.**
+> **Withdrawn 20 Sep 2026.** `LLR_State_Profiles.csv` reports Telangana — which publishes the
+> identical three-part bank — as **20 questions, 12 to pass, confirmed on the department's own
+> FAQ page**. That is far stronger evidence than the single secondary source behind claim C,
+> so **keep `passMark: 12`**. AP's own threshold is still listed as "12 or 16 — confirm at your
+> RTO", so item 2 of the checklist stands. The original reasoning is kept below because the
+> asymmetry argument still applies to any value that remains unconfirmed.
+
+~~**Consider shipping `passMark: 16` rather than `12` until you have stood in the RTO.**~~
 
 The two errors are not symmetric:
 
@@ -256,16 +268,16 @@ all of it is one line of `exam-config.json`.
 | # | Assumption | Basis | Blast radius if wrong |
 |---|---|---|---|
 | A1 | 20 questions | Most-cited for AP | Practice length |
-| A2 | 12 to pass (60%) | Your docs; contested at 80% | **A false PASS — the worst outcome in the app** |
-| A3 | Per-question timer | Most consistent claim | Wrong pressure; different engine path |
-| A4 | 30s per question | Most-cited | Wrong pressure |
+| A2 | 12 to pass (60%) | ✅ **Corroborated** — Telangana dept FAQ, same bank | Much reduced. AP's own figure still unconfirmed |
+| A3 | Per-question timer | 🔴 **Contradicted** — Telangana confirms 10 min whole-paper | Wrong pressure; different engine path |
+| A4 | 30s per question | Likely the *average* implied by 20 × 30 s = 10 min, restated as a countdown | Wrong pressure |
 | A5 | No back navigation | Sarathi convention — **no direct evidence** | Simulation fidelity |
 | A6 | No skip | Follows A5 | Minor |
 | A7 | No negative marking | No source mentions any | Scoring |
 | A8 | Mix 8/7/5 | **Invented — no source** | Practice emphasis |
 | A9 | Answers shown only at end | TRD decision; standard | Simulation fidelity |
 | A10 | ₹150 + ₹50 | Several sources agree | Guide only; carries `lastVerified` |
-| A11 | Telugu and English PDFs share numbering | Your appendix | **Would corrupt the bank — `G-MERGE` exists for exactly this** |
+| A11 | Telugu and English PDFs share numbering | Your appendix | **Still untested — the supplied dataset has no Telugu at all (07 §2)** |
 | A12 | PDFs are text, not scans | Your appendix | Determines whether OCR is mandatory |
 
 A11 and A12 are unverifiable until the PDFs are in hand — see §0.
