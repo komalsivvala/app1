@@ -1,0 +1,214 @@
+# Implementation Plan — AP Learner's Licence Practice App
+
+**Setup:** Solo developer + Claude Code · **Target:** ~4 weeks to submission
+**Status:** Draft v2 · **Date:** 21 Sep 2026
+
+---
+
+## 0. Read this before anything else
+
+### The critical path is store accounts, not code
+
+You can write this app in three weeks. You cannot make Apple and Google move faster. Both of these must be started **on day 0, before a single line of code**:
+
+**Google Play — register as an organization, not a personal account.**
+
+Google requires personal developer accounts created after 13 Nov 2023 to run a **closed test with 12 testers continuously opted in for 14 days** before they can publish to production. **Organization accounts are exempt.** You have a registered company (Vensai) — register the Play Console account under it and you skip that requirement entirely. Registering personal adds a minimum of two weeks to your launch and makes you recruit a dozen people who keep the app installed daily.
+
+Organization registration needs a D-U-N-S number. It's free, but D&B's standard turnaround runs from a few business days to around a month — Apple's own guidance says allow up to five business days when requesting one through their lookup tool. Treat it as weeks, not days, and start today. If Vensai already has one, you're ahead.
+
+**Apple — enrol immediately and expect it to be slow.** Apple Developer Program enrolment is routine for most people but developer-forum reports of organization enrolments stuck for two to six weeks are common. Organization enrolment also needs the D-U-N-S number.
+
+**Do both today.** Everything else in this plan can run while they process.
+
+### The second constraint: day 2 decides the project
+
+Telugu PDF extraction either works or it doesn't. If it produces mojibake and OCR also struggles, the entire content strategy changes and the timeline moves. Find that out on **day 2**, not week 3. This is why the pipeline is first and the UI is second, even though the UI is more fun.
+
+---
+
+## 1. Milestones
+
+| # | Milestone | Days | Gate to pass |
+|---|---|---|---|
+| **M0** | Store accounts + repo | 0 | Both enrolments submitted; repo + CI green |
+| **M1** | Content pipeline | 1–4 | All nine validation gates pass; Telugu verified real and spot-checked |
+| **M2** | App foundation | 5–7 | Navigation, theming, i18n, fonts; Telugu renders correctly on device |
+| **M3** | Mock exam | 8–12 | Full exam end-to-end, scored, persisted, reviewable |
+| **M4** | Learn + Signs | 13–16 | Browse, search, flashcards, sign chart |
+| **M5** | Progress + Guide | 17–19 | Stats, weak areas, bookmarks, process guide |
+| **M6** | Explanations + polish | 20–23 | Every question explained; a11y and perf budgets met |
+| **M7** | Store submission | 24–28 | Both stores submitted |
+
+---
+
+## 2. M0 — Day 0
+
+- [ ] Apply for a D-U-N-S number if Vensai doesn't have one — **do this first, everything else queues behind it**
+- [ ] Start Google Play Console **organization** registration
+- [ ] Start Apple Developer Program **organization** enrolment
+- [ ] Decide the app name — avoid "Official", "Govt", "RTO", "Parivahan", "Sarathi". Working title: *AP Learner's Licence — Practice Test*
+- [ ] Repo, Expo SDK 57 + TypeScript strict, ESLint/Prettier, GitHub Actions (typecheck → lint → test)
+- [ ] EAS project; `preview` and `production` channels
+- [ ] Commit these six docs into `docs/`
+
+## 3. M1 — Content pipeline · Days 1–4
+
+**This milestone is the product.** Everything downstream is presentation.
+
+**Day 1 — extract**
+- [ ] `01_download.py` — fetch all six PDFs, record SHA-256 per file
+- [ ] `02_extract.py` — pdfplumber table extraction → raw JSON per (topic, language)
+- [ ] Eyeball the English output against the PDF by hand for 10 questions
+
+**Day 2 — the Telugu gate 🚨**
+- [ ] Run `G-TELUGU`: ≥90% of characters in each Telugu string inside U+0C00–U+0C7F
+- [ ] **If it fails:** Tesseract `tel` OCR fallback, then a human-review queue
+- [ ] **If OCR also fails:** stop and reassess. Options are manual transcription of ~250 questions, or English-only v1 with Telugu in v1.1. Do not proceed on the assumption it'll be fine later.
+- [ ] Render a sample of extracted Telugu on a real device before declaring this passed — validation that passes in a terminal can still render wrong on Android
+
+**Day 3 — signs and merge**
+- [ ] `03_extract_signs.py` — PyMuPDF image extraction keyed to question number
+- [ ] Redraw as SVG anything that extracts poorly, against the standard Indian sign set
+- [ ] `04_merge.py` — join Telugu ↔ English on `(topic, officialQNo)`
+- [ ] Assign stable IDs (`rs-###`, `rrr-###`, `gdp-###`) from a **content hash**, never from `officialQNo` — see `05-Data-Schema.md` §2.2
+
+**Day 4 — validate and emit**
+- [ ] `05_validate.py` — all nine gates (`02-TRD.md` §4); quarantine failures to `reports/needs_review.json`
+- [ ] `pipeline/id-map.json` — content-hash → stable ID, committed (gate `G-IDSTABLE`)
+- [ ] Record the General Driving Principles question count — `G-MIX` needs it, and no source has told us yet
+- [ ] Sentence-case the English, preserving RTO / LMV / HMV / MV Act / KMPH / CC / NH
+- [ ] `06_emit.py` → `src/content/questions.ts` + `src/content/signs/*.svg`
+- [ ] Golden-file snapshots
+- [ ] Jest content suite re-asserting every gate against the emitted bundle
+
+**Gate:** all gates pass · Telugu confirmed real on a device · **15 random Telugu/English pairs checked by a human who reads Telugu** · quarantine list reviewed and understood · per-topic counts known and each ≥ its `sectionMix` slot.
+
+## 4. M2 — App foundation · Days 5–7
+
+- [ ] Expo Router: 4 tabs + exam stack + modal routes
+- [ ] `design/tokens.ts` from the UI/UX spec — exact hex values, both themes
+- [ ] `typography.ts` implementing `lineHeightFor(role, script, size)` — numbers from `03-UIUX-Design.md` §2, **multiplied by `PixelRatio.getFontScale()`**
+- [ ] Bundle Noto Sans Telugu + Inter via `expo-font`
+- [ ] i18n: `en.json` / `te.json`, `expo-localization` detection, kv-store persistence read synchronously at boot
+- [ ] CI check: i18n key parity + no hardcoded user-facing strings
+- [ ] SQLite: `SQLiteProvider`, `migrate()`, schema v1, migration test
+- [ ] First-launch language sheet; Home shell
+- [ ] **Build to a real mid-range Android device and inspect Telugu at 100% and 200% text scale**
+
+**Gate:** Telugu renders correctly at both scales on physical hardware. Not in a simulator.
+
+## 5. M3 — Mock exam · Days 8–12
+
+- [ ] `examEngine.ts` — pure, no React: sampling, scoring, timing
+- [ ] `selection.ts` — `sectionMix` + weak-area weighting, seeded RNG
+- [ ] Unit tests: scoring, pass threshold, timer expiry, no-repeat-within-paper, `sectionMix` exactness, deterministic seeding
+- [ ] Pre-exam screen reading rules from `exam-config.json`
+- [ ] Exam session screen — `OptionRow`, isolated `ExamTimer` leaf, progress pill
+- [ ] Forward-only: disable hardware back, swipe-back, header back; exit confirm dialog
+- [ ] Clock-change detection → `timing_reliable = 0`
+- [ ] Write the `attempts` row **and all N `attempt_answers` rows** at attempt creation — the paper is a DB fact, not a re-derivation from `seed`
+- [ ] Per-question `presented_at`; mode-specific background rules (`04-App-Flow.md` §3)
+- [ ] Update `question_stats`, writing `exam_seen`/`exam_correct` only from mock attempts
+- [ ] Result screen — verdict with icon, score, topic breakdown
+- [ ] Review screen — all questions, both answers marked, explanation block, bookmark
+- [ ] Resume-in-progress-attempt on relaunch
+- [ ] Maestro E2E: install → language → full mock → review, **in airplane mode**
+
+**Gate:** a complete mock test works end-to-end in both languages, both themes, offline. This is the moment the app becomes real — screenshot everything.
+
+## 6. M4 — Learn + Signs · Days 13–16
+
+- [ ] Topic cards → question list with mastered / unseen / wrong-last-time status
+- [ ] Question detail: reveal answer, explanation, legal ref, bookmark
+- [ ] Flashcard swipe deck writing to `question_stats`
+- [ ] Bilingual search — NFC-normalised index built once at module scope, <150 ms
+- [ ] Signs grid (`FlashList`, memoised SVG cells), three categories
+- [ ] Sign detail: large SVG, both languages shown together, linked questions
+
+**Gate:** signs grid scrolls at 60 fps on the test device; search returns in <150 ms across the full bank.
+
+## 7. M5 — Progress + Guide · Days 17–19
+
+- [ ] Progress tab: readiness card, attempt history, per-topic accuracy bars
+- [ ] Weak-area practice session — **untimed, immediate feedback, explanation after each**
+- [ ] Bookmarks screen; dangling-ID filtering
+- [ ] Guide content in `guide.json` with a `lastVerified` date on every fee and rule
+- [ ] Settings: language, theme, reset progress with confirm
+- [ ] About: version, content version, source attribution + `aptransport.org` link, privacy policy link, non-affiliation banner
+
+## 8. M6 — Explanations + polish · Days 20–23
+
+**Day 20–21 — explanations.** Write a 2–3 sentence bilingual explanation for every question, in batches by topic. Cite MV Act 1988 / CMVR 1989 sections **only when verified on `indiacode.nic.in`** — otherwise `legalRef: null`. This is the slowest content task; don't leave it to the last day.
+
+**Day 22 — accessibility.**
+- [ ] Contrast assertions on the token set in CI
+- [ ] Screen-reader labels on every interactive element, in the active language
+- [ ] Options announce as "Option 2 of 4: …"; timer announces at 50% and 10% only
+- [ ] 200% dynamic type on every screen, Telugu especially
+- [ ] Reduce-motion honoured
+
+**Day 23 — performance.**
+- [ ] Cold start < 2s on a 3GB-RAM Android
+- [ ] AAB under 40 MB; JS bundle under 4 MB (`expo-atlas`)
+- [ ] Confirm the timer tick doesn't re-render the exam screen
+- [ ] Screenshot matrix: every screen × {en, te} × {light, dark} × {100%, 200%}
+
+## 9. M7 — Store submission · Days 24–28
+
+**Day 24 — compliance.** This is where apps in this category die.
+- [ ] Play **Government apps declaration** submitted — the answer is *"not developed by or on behalf of a government entity"*. Write that down in `docs/store-submission.md` so the answer is deliberate, not improvised in the console.
+- [ ] Non-affiliation statement in the store listing description itself, not only in-app
+- [ ] `aptransport.org` source link in both listings
+- [ ] Icon audit: no emblem, seal, lion, tricolour, or anything official-looking
+- [ ] Privacy policy live on GitHub Pages; linked in-app and in both listings
+- [ ] Play Data Safety + Apple App Privacy both filled as "no data collected"
+- [ ] Content rating questionnaire
+
+**Day 25 — assets.** Adaptive Android icon, iOS icon set, splash, store screenshots at every required size, listing copy in English and Telugu.
+
+**Day 25–26 — RTO verification.** Go and confirm the real exam format: question count, pass mark, timing model, and whether the test lets you go back. Update `exam-config.json` and set `formatVerifiedOn` — until you do, it ships `null` and the app honestly says the format is unconfirmed. Nothing else in this plan substitutes for seeing the actual test.
+
+**Day 26–27 — real-user test.** Ten AP users complete a mock on a physical device without help. Watch them; don't coach. Fix what confuses them.
+
+Distribute the build via **EAS internal distribution** on Android (an install link, no Play review) and **TestFlight** on iOS — note TestFlight *external* groups need Beta App Review first, which takes a day or two, so use an internal group of up to 100 people on your team instead, or start the external review on day 24.
+
+Give yourself two days here. A one-day window with submission the next morning means any real finding gets ignored, which defeats the point of testing.
+
+**Day 28 — submit.** EAS Build production → EAS Submit both stores.
+
+---
+
+## 10. Risk register
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| **Play registered as personal account** | **+2 weeks minimum** | Register as organization on day 0. This is the single highest-leverage decision in the plan. |
+| **Apple enrolment stuck** | +2–6 weeks | Start day 0. Ship Android first if it drags; the codebase doesn't care. |
+| **Telugu extraction fails** | Project-shaping | Day-2 gate. OCR fallback. Predefined fallback: English-only v1, Telugu v1.1. |
+| **Store rejection for government affiliation** | +1–2 weeks | Over-comply on day 24. Budget for one rejection cycle. |
+| **Exam format wrong** | Credibility | Config-driven; RTO visit day 26; format date shown in-app. |
+| **Explanations slip** | Quality | Started day 20, not day 27. Ship with `legalRef: null` rather than invented citations. |
+| **Telugu clips at 200% scale** | Accessibility | Per-script line-height from day 5; device test at M2 gate. |
+| **Scope creep** | Timeline | The P1 list in the PRD exists to hold things. Nothing moves from P1 to P0 before submission. |
+
+## 11. Definition of done — every milestone
+
+1. Typecheck, lint, and all tests green
+2. i18n key parity holds
+3. Content validation gates pass
+4. Screenshots captured in both languages and both themes
+5. Built and run on a **physical mid-range Android device** — not just a simulator
+6. Committed and pushed
+
+## 12. If you have to cut
+
+Everything on this list is **P0.5 in the PRD**, not free scope. Cutting any of it requires a deliberate PRD amendment *and* striking the matching launch-criterion checkbox — otherwise you ship against criteria you've quietly stopped meeting. Cut in this order:
+
+1. Flashcard mode *(part of R5; Learn browse covers most of it)*
+2. Weak-area practice *(part of R8; progress stats still show where to focus)*
+3. Bookmarks *(R9)*
+4. Process guide *(R10; the information exists on the official portal)*
+5. Dark mode *(R12; ship light-only — halves the screenshot matrix too)*
+
+**Never cut:** R1–R4 (the exam engine, the verified bilingual bank, the explanations, the post-exam review), R11 (offline), or Telugu. Those are the product. Everything else is furniture.
