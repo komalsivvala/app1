@@ -22,14 +22,27 @@ No accounts. No ads. No tracking. No network required — ever.
 | Milestone | State |
 |---|---|
 | Phase 0 — exam-format research, `exam-config.json`, gate `G-CONFIG` | ✅ done |
-| M1 — content pipeline | ⛔ **blocked**: `aptransport.org` unreachable from the build environment |
+| M1 — content pipeline built and tested end-to-end | ✅ done |
+| M1 — content **shippable** | ⛔ **blocked: the supplied dataset has no Telugu** |
 | M2 — app foundation | not started |
 
-**M1 is blocked and it blocks the product.** The six source PDFs cannot be downloaded
-here. See [`docs/00-phase0-exam-format.md` §0](docs/00-phase0-exam-format.md) for the
-three ways to unblock it. Until then no question enters the bundle — placeholder content
-is never substituted, because a fabricated answer key is this project's one unforgivable
-failure.
+**The pipeline works; the content is one language short.** 277 questions ingest cleanly,
+every answer key is valid, every topic clears 3× its `sectionMix` slot — and there are
+**zero Telugu characters** in the entire dataset. Bilingual content is never-cuttable
+(`01-PRD.md` §6), so the gates fail and nothing ships:
+
+```
+$ .venv/bin/python pipeline/05_validate.py
+[FAIL] G-BILINGUAL  277 violations — no Telugu for: text, option1..4
+  TOTAL   0 of 277 shippable
+
+$ .venv/bin/python pipeline/05_validate.py --allow-english-only
+  TOTAL 277 of 277 shippable    quarantined: 0
+```
+
+**Read [`docs/07-content-assessment.md`](docs/07-content-assessment.md) before doing
+anything else** — it has the five open decisions, including a department-confirmed format
+for Telangana that contradicts our timing model.
 
 ## What you can run today
 
@@ -42,6 +55,16 @@ npm run validate:config       # just the gate, with a readable summary
 
 Neither needs `npm install` — both run on Node's built-in test runner against zero
 dependencies, so the exam config stays gated even before the app exists.
+
+The content pipeline needs Python:
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r pipeline/requirements.txt
+
+.venv/bin/python pipeline/test_pipeline.py          # 21 tests, incl. ID stability
+npm run content:ingest                              # CSV -> canonical records
+npm run content:validate                            # every gate from 02-TRD.md §4
+```
 
 ```
 $ npm run validate:config
@@ -76,9 +99,20 @@ python3 pipeline/01_download.py --offline  # or hash PDFs you placed in pipeline
 
 `--offline` is the escape hatch for networks that block `aptransport.org`: download the
 six by hand, drop them in `pipeline/raw/`, and every downstream stage behaves identically.
-Stages `02`–`06` are written once the real PDFs are in hand — their design depends on the
-actual table structure, and writing extraction code against a PDF nobody has opened is
-how you get a bank full of confidently wrong answers.
+
+The stages that exist today read the **consolidated CSV** in `pipeline/raw/supplied/`,
+since that is how the bank actually arrived:
+
+```
+02_ingest_csv.py  CSV -> canonical records (Telugu recorded as absent, never invented)
+05_validate.py    the gates from 02-TRD.md §4; quarantines to reports/needs_review.json
+06_emit.py        stable IDs via id-map.json; refuses to emit a monolingual bundle
+```
+
+`02_extract.py` (PDF tables) and `04_merge.py` (the Telugu↔English join) are written when
+the official PDFs arrive — their design depends on the real table structure, and writing
+extraction code against a PDF nobody has opened is how a bank fills with confidently wrong
+answers.
 
 ## Documentation
 
@@ -91,6 +125,7 @@ how you get a bank full of confidently wrong answers.
 | [`docs/04-App-Flow.md`](docs/04-App-Flow.md) | Navigation, exam state machine, edge cases |
 | [`docs/05-Data-Schema.md`](docs/05-Data-Schema.md) | Content schema, SQLite schema, key queries, migrations |
 | [`docs/06-Implementation-Plan.md`](docs/06-Implementation-Plan.md) | Milestones, gates, risk register, cut order |
+| [`docs/07-content-assessment.md`](docs/07-content-assessment.md) | **What the supplied dataset is and is not.** Five open decisions |
 
 ## Repository layout
 
@@ -98,8 +133,14 @@ how you get a bank full of confidently wrong answers.
 docs/                 the seven specs above
 pipeline/             Python content pipeline
   sources.json        the six official PDF URLs
+  lib_content.py      normalisation, category->topic map, Telugu ratio, content hash
   01_download.py      fetch + SHA-256 manifest (with --offline mode)
-  raw/                the source PDFs — committed for reproducibility
+  02_ingest_csv.py    consolidated CSV -> canonical records
+  05_validate.py      the content gates
+  06_emit.py          stable IDs + bundle
+  test_pipeline.py    21 tests, incl. the ID-stability property
+  id-map.json         content hash -> stable ID. COMMITTED. Never hand-edit
+  raw/                source PDFs + supplied/ CSVs — committed for reproducibility
   reports/            validation output, human-review queues
 scripts/
   validate-exam-config.mjs   gate G-CONFIG (zero deps)
