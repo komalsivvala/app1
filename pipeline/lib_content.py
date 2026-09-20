@@ -1,0 +1,143 @@
+"""
+Shared helpers for the content pipeline.
+
+Kept in one place so that the ingest stage, the validation stage and the emit
+stage cannot drift apart on the two things that must agree exactly: how a
+question's text is normalised (which decides both dedup and its stable ID), and
+how a source category maps onto the three official AP topics.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import re
+import unicodedata
+
+# The three parts the AP/Telangana bank is published in. These are the topic
+# IDs used by exam-config.json's sectionMix and by the app.
+TOPICS = ("road-signs", "rules-of-road-regulations", "general-driving-principles")
+
+TOPIC_PREFIX = {
+    "road-signs": "rs",
+    "rules-of-road-regulations": "rrr",
+    "general-driving-principles": "gdp",
+}
+
+# The consolidated CSV uses a 12-category taxonomy of its own. The official AP
+# bank is published in three parts, and sectionMix is expressed in those three,
+# so every category must land in exactly one of them.
+#
+# Road markings go with signs: both are "what does this marking on the road
+# tell you", and the AP Road Signs part covers them. Documents, penalties and
+# the MV Act go with Rules of the Road, which is where the AP bank puts the
+# regulatory material. Safety, etiquette, emergencies and first aid are General
+# Driving Principles.
+CATEGORY_TO_TOPIC = {
+    "Traffic Signs": "road-signs",
+    "Road Markings": "road-signs",
+    "Traffic Rules": "rules-of-road-regulations",
+    "Speed Limits": "rules-of-road-regulations",
+    "Parking Rules": "rules-of-road-regulations",
+    "Vehicle Documents": "rules-of-road-regulations",
+    "Fines & Penalties": "rules-of-road-regulations",
+    "Motor Vehicles Act": "rules-of-road-regulations",
+    "Safety": "general-driving-principles",
+    "Driving Etiquette": "general-driving-principles",
+    "Emergency Situations": "general-driving-principles",
+    "First Aid": "general-driving-principles",
+}
+
+TELUGU_BLOCK = (0x0C00, 0x0C7F)
+
+# A question whose text matches this needs an image to be answerable at all.
+SIGN_REFERENCE = re.compile(
+    r"\bthis sign\b|\bthe sign (shown|below)\b|\bsign shown\b|\bfollowing sign\b"
+    r"|\bthis (road )?marking\b|\bshown below\b|\bthis figure\b|\bthe figure below\b",
+    re.I,
+)
+
+# Acronyms that must survive the ALL-CAPS -> sentence-case conversion.
+ACRONYMS = {
+    "RTO", "LMV", "HMV", "MV", "KMPH", "KM", "CC", "NH", "SH", "IRC",
+    "ATM", "PUC", "RC", "LL", "DL", "AP", "TS", "ID", "SOS", "CPR",
+}
+
+
+def nfc(s: str) -> str:
+    """NFC-normalise. Required before any Telugu comparison or search index."""
+    return unicodedata.normalize("NFC", s)
+
+
+def norm_text(s: str) -> str:
+    """Normalised form used for dedup and for the content hash behind stable IDs.
+
+    Collapses whitespace and case and strips terminal punctuation, so that a
+    re-run whose only change is spacing does not mint new IDs and orphan every
+    user's stats.
+    """
+    s = nfc(s).strip().lower()
+    s = re.sub(r"\s+", " ", s)
+    return s.rstrip(" .?:;!")
+
+
+def telugu_ratio(s: str) -> float:
+    """Fraction of *letters* in s that sit in the Telugu Unicode block.
+
+    Digits, spaces and Latin punctuation are excluded from the denominator:
+    a legitimate Telugu string containing "50 km/h" would otherwise be scored
+    as partly non-Telugu and quarantined for no reason.
+    """
+    letters = [c for c in nfc(s) if c.isalpha()]
+    if not letters:
+        return 0.0
+    lo, hi = TELUGU_BLOCK
+    return sum(1 for c in letters if lo <= ord(c) <= hi) / len(letters)
+
+
+def content_hash(topic: str, english_text: str, options: "list[str] | None" = None) -> str:
+    """The key in pipeline/id-map.json.
+
+    Deliberately NOT derived from the official question number: if the
+    department inserts one question upstream, every later number shifts and
+    every user's history silently reattaches to the wrong question.
+
+    The OPTIONS are part of the hash, not just the stem. The official bank asks
+    "in which of these places may you park your vehicle?" three times with three
+    different option sets - three different questions. Hashing the stem alone
+    gave all three one ID, so bookmarking one bookmarked all three and their
+    stats merged. Options are sorted, so a pure reordering keeps the ID.
+
+    The cost is accepted knowingly: correcting a typo in an option mints a new
+    ID and that question's stats reset. That is the safer failure. A colliding
+    ID merges distinct questions' history permanently and silently; a new ID
+    loses one question's counters, and the retire path in id-map.json exists for
+    corrections that must keep their history.
+    """
+    parts = [topic, norm_text(english_text)]
+    if options is not None:
+        parts.extend(sorted(norm_text(o) for o in options))
+    return hashlib.sha256("\x00".join(parts).encode()).hexdigest()
+
+
+def sentence_case(s: str) -> str:
+    """Convert ALL-CAPS source text to sentence case, preserving acronyms.
+
+    No-op on text that is already mixed case, so it is safe to run twice.
+    """
+    letters = [c for c in s if c.isalpha()]
+    if not letters or not all(c.isupper() for c in letters):
+        return s  # already mixed case - leave it alone
+
+    out, start_of_sentence = [], True
+    for tok in re.split(r"(\s+)", s.lower()):
+        if not tok.strip():
+            out.append(tok)
+            continue
+        bare = tok.strip(".,;:!?()[]'\"/-")
+        if bare.upper() in ACRONYMS:
+            tok = tok.replace(bare, bare.upper())
+        elif start_of_sentence:
+            tok = tok[0].upper() + tok[1:]
+        out.append(tok)
+        start_of_sentence = tok.rstrip().endswith((".", "?", "!"))
+    return "".join(out)
