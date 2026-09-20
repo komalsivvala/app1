@@ -1,0 +1,15 @@
+{
+  "name": "ap-learners-licence-practice",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Offline bilingual (Telugu/English) practice app for the Andhra Pradesh Learner's Licence computer test. Unofficial study aid; not affiliated with any government entity.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate:config": "node scripts/validate-exam-config.mjs",
+    "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
+    "test": "npm run validate:config && npm run test:scripts"
+  }
+}

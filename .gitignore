@@ -1,0 +1,44 @@
+# --- dependencies ---
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# --- Expo / React Native (from M2 onwards) ---
+.expo/
+dist/
+web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+ios/
+android/
+
+# --- build output ---
+*.aab
+*.apk
+*.ipa
+
+# --- local env ---
+.env
+.env.local
+.DS_Store
+
+# --- editor ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# --- pipeline ---
+# The source PDFs in pipeline/raw/ ARE committed on purpose — see that
+# directory's README. Only partial downloads and scratch output are ignored.
+pipeline/raw/*.part
+pipeline/**/.ipynb_checkpoints/
+
+# --- test/coverage ---
+coverage/
+*.log

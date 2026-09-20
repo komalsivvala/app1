@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  config-gate:
+    name: Exam config (G-CONFIG)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # No `npm ci` on purpose: G-CONFIG has zero dependencies so it keeps
+      # gating the exam format even if the app's install is broken, and it
+      # gated the format before the app existed at all.
+      - name: Validate exam-config.json
+        run: node scripts/validate-exam-config.mjs
+
+      # `node --test <dir>` is broken on Node 22.22 (it tries to execute the
+      # directory as a test file). The glob form works; do not "simplify" it.
+      - name: Gate tests
+        run: node --test "scripts/**/*.test.mjs"
+
+  pipeline-lint:
+    name: Pipeline (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Byte-compile every pipeline stage
+        run: python3 -m compileall -q pipeline/
+
+      - name: Source manifest is valid and complete
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          s = json.load(open('pipeline/sources.json'))
+          files = s['files']
+          assert len(files) == 6, f"expected 6 source PDFs, found {len(files)}"
+          topics = {'road-signs', 'rules-of-road-regulations', 'general-driving-principles'}
+          for lang in ('en', 'te'):
+              got = {f['topic'] for f in files if f['lang'] == lang}
+              assert got == topics, f"{lang}: missing topics {topics - got}"
+          for f in files:
+              assert f['url'].startswith('https://www.aptransport.org/'), (
+                  f"{f['name']} is not sourced from aptransport.org: {f['url']}"
+              )
+          print(f"sources.json OK — {len(files)} PDFs, 3 topics x 2 languages, all from aptransport.org")
+          PY
