@@ -42,3 +42,6 @@ pipeline/**/.ipynb_checkpoints/
 # --- test/coverage ---
 coverage/
 *.log
+
+# generated pipeline artefacts (id-map.json is NOT ignored - it must be committed)
+pipeline/build/

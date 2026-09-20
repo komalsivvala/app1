@@ -1,0 +1,1666 @@
+{
+  "quarantined": [
+    {
+      "id": "Q001",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q002",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q003",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q004",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q005",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q006",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q007",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q008",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q009",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q010",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q011",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q012",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q013",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q014",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q015",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q016",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q017",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q018",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q019",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q020",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q021",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q022",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q023",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q024",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q025",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q026",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q027",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q028",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q029",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q030",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q031",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q032",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q033",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q034",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q035",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q036",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q037",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q038",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q040",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q041",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q042",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q043",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q044",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q045",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q046",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q047",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q048",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q049",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q050",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q051",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q052",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q053",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q054",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q055",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q056",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q057",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q058",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q059",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q061",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q062",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q063",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q064",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q066",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q067",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q068",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q069",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q070",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q071",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q072",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q073",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q074",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q077",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q078",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q079",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q080",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q081",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q082",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q084",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q085",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q086",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q087",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q088",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q089",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q091",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q092",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q093",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q094",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q095",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q097",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q098",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q099",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q101",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q102",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q103",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q104",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q105",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q107",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q108",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q111",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q112",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q113",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q114",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q115",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q116",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q117",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q118",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q119",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q120",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q122",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q123",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q124",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q125",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q126",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q128",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q129",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q130",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q131",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q132",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q133",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q134",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q135",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q136",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q137",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q138",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q142",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q147",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q148",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q149",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q152",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q154",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q155",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q156",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q157",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q158",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q159",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q160",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q161",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q162",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q163",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q172",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q173",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q174",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q177",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q178",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q180",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q181",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q182",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q186",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q187",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q189",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q190",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q191",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q192",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q193",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q194",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q195",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q197",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q198",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q199",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q200",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q201",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q202",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q203",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q204",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q205",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q206",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q207",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q208",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q209",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q211",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q212",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q213",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q214",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q215",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q216",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q217",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q218",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q219",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q220",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q221",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q222",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q223",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q224",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q225",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q226",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q227",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q228",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q230",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q231",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q233",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q234",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q235",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q236",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q237",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q238",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q240",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q241",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q242",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q243",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q244",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q245",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q246",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q247",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q248",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q249",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q250",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q251",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q252",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q254",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q255",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q256",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q257",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q258",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q259",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q260",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q261",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q262",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q263",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q264",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q265",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q266",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q270",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q271",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q272",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q273",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q274",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q275",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q276",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q277",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q278",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q279",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q280",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q281",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q282",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q283",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q285",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q286",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q288",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q289",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q290",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q291",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q292",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q293",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q294",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q295",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q296",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q297",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q299",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q302",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q304",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q305",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q307",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q308",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q309",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q310",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q311",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q312",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q313",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q314",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q315",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q316",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q317",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q318",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q319",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q320",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q326",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q327",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q328",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q329",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q330",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q331",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q332",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q333",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q334",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q335",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q336",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    },
+    {
+      "id": "Q337",
+      "failedGates": [
+        "G-BILINGUAL"
+      ]
+    }
+  ]
+}

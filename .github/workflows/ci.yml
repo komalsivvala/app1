@@ -38,6 +38,21 @@ jobs:
       - name: Byte-compile every pipeline stage
         run: python3 -m compileall -q pipeline/
 
+      - name: Pipeline unit + ID-stability tests
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -q -r pipeline/requirements.txt
+          .venv/bin/python pipeline/test_pipeline.py
+
+      - name: Content gates
+        run: |
+          .venv/bin/python pipeline/02_ingest_csv.py \
+            pipeline/raw/supplied/LLR_Andhra_Pradesh.csv \
+            --out pipeline/build/records.json
+          # Not --strict: G-BILINGUAL is expected to fail until Telugu arrives.
+          # The report is what CI surfaces; it must not silently go green either.
+          .venv/bin/python pipeline/05_validate.py
+
       - name: Source manifest is valid and complete
         run: |
           python3 - <<'PY'

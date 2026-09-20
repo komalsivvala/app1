@@ -10,6 +10,9 @@
   "scripts": {
     "validate:config": "node scripts/validate-exam-config.mjs",
     "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
+    "content:ingest": "python3 pipeline/02_ingest_csv.py pipeline/raw/supplied/LLR_Andhra_Pradesh.csv --out pipeline/build/records.json",
+    "content:validate": "python3 pipeline/05_validate.py",
+    "content:test": "python3 pipeline/test_pipeline.py",
     "test": "npm run validate:config && npm run test:scripts"
   }
 }

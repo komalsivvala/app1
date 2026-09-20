@@ -1,0 +1,68 @@
+{
+  "records": 277,
+  "shippable": 0,
+  "quarantined": 277,
+  "byTopicShippable": {},
+  "blockingGatesFailed": [
+    "G-BILINGUAL",
+    "G-MERGE",
+    "G-MIX"
+  ],
+  "gates": {
+    "G-STRUCT": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
+    "G-BILINGUAL": {
+      "passed": false,
+      "blocking": true,
+      "violations": 277
+    },
+    "G-TELUGU": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
+    "G-ASSET": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
+    "G-DEDUP": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
+    "G-KEY": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
+    "G-MERGE": {
+      "passed": false,
+      "blocking": true,
+      "violations": 1
+    },
+    "G-MIX": {
+      "passed": false,
+      "blocking": true,
+      "violations": 3
+    },
+    "G-IDSTABLE": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
+    "G-EXPLAIN": {
+      "passed": false,
+      "blocking": false,
+      "violations": 277
+    },
+    "G-STEM": {
+      "passed": false,
+      "blocking": false,
+      "violations": 1
+    }
+  }
+}
