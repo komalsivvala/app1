@@ -1,0 +1,12 @@
+{
+  "indexUrl": "https://www.aptransport.org/html/llr-question-bank.html",
+  "attribution": "Question bank published by the Transport Department, Government of Andhra Pradesh",
+  "files": [
+    { "name": "road-signs-english.pdf",                 "topic": "road-signs",                  "lang": "en", "url": "https://www.aptransport.org/html/pdf/road-signs-english.pdf" },
+    { "name": "road-signs-telugu.pdf",                  "topic": "road-signs",                  "lang": "te", "url": "https://www.aptransport.org/html/pdf/road-signs-telugu.pdf" },
+    { "name": "rules-of-road-regulations-english.pdf",  "topic": "rules-of-road-regulations",   "lang": "en", "url": "https://www.aptransport.org/html/pdf/rules-of-road-regulations-english.pdf" },
+    { "name": "rules-of-road-regulations-telugu.pdf",   "topic": "rules-of-road-regulations",   "lang": "te", "url": "https://www.aptransport.org/html/pdf/rules-of-road-regulations-telugu.pdf" },
+    { "name": "general-driving-principles-english.pdf", "topic": "general-driving-principles",  "lang": "en", "url": "https://www.aptransport.org/html/pdf/general-driving-principles-english.pdf" },
+    { "name": "general-driving-principles-telugu.pdf",  "topic": "general-driving-principles",  "lang": "te", "url": "https://www.aptransport.org/html/pdf/general-driving-principles-telugu.pdf" }
+  ]
+}

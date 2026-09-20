@@ -1,0 +1,9 @@
+# Content pipeline — Python 3.11+
+# Pinned so a re-run a year from now produces the same bundle.
+requests==2.32.3        # 01_download
+pdfplumber==0.11.10     # 02_extract  — table extraction
+PyMuPDF==1.24.10        # 03_extract_signs — embedded image extraction
+Pillow==10.4.0          # image post-processing
+pytesseract==0.3.13     # OCR fallback when Telugu text extraction fails
+                        #   also needs the tesseract binary + `tel` traineddata:
+                        #   apt-get install tesseract-ocr tesseract-ocr-tel
