@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/komalsivvala/app1/src/content/exam-config.schema.json",
+  "title": "ExamConfig",
+  "description": "The single source of truth for the mock-exam format. Changing this file changes the exam; no code edit is required. Cross-field invariants that JSON Schema cannot express are enforced by scripts/validate-exam-config.mjs (gate G-CONFIG) and re-asserted by the Jest content suite.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "questionCount",
+    "passMark",
+    "timing",
+    "allowBackNavigation",
+    "allowSkip",
+    "negativeMark",
+    "sectionMix",
+    "formatVerifiedOn"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "questionCount": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Questions in one mock paper. UNVERIFIED for AP: sources report 10-20. See docs/00-phase0-exam-format.md."
+    },
+    "passMark": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Correct answers needed to pass, as an absolute count (not a percentage). UNVERIFIED for AP: sources disagree between 60% and 80% of questionCount."
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "secondsPerQuestion", "totalSeconds"],
+      "properties": {
+        "mode": {
+          "enum": ["per-question", "whole-paper"],
+          "description": "per-question: each question has its own countdown, anchored at attempt_answers.presented_at. whole-paper: one countdown for the paper, anchored at attempts.started_at."
+        },
+        "secondsPerQuestion": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Required when mode is per-question; must be null when mode is whole-paper."
+        },
+        "totalSeconds": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Required when mode is whole-paper; must be null when mode is per-question."
+        }
+      }
+    },
+    "allowBackNavigation": {
+      "type": "boolean",
+      "description": "When false the session screen disables hardware back, swipe-back and header back. UNVERIFIED for AP."
+    },
+    "allowSkip": {
+      "type": "boolean",
+      "description": "When false, Next stays disabled until an option is selected."
+    },
+    "negativeMark": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Marks deducted per wrong answer. 0 = no negative marking. Timeouts and skips never deduct."
+    },
+    "sectionMix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["road-signs", "rules-of-road-regulations", "general-driving-principles"],
+      "properties": {
+        "road-signs": { "type": "integer", "minimum": 0 },
+        "rules-of-road-regulations": { "type": "integer", "minimum": 0 },
+        "general-driving-principles": { "type": "integer", "minimum": 0 }
+      },
+      "description": "Questions drawn per topic. Must sum to questionCount (gate G-MIX). INFERRED, not observed: no source states the real test's topic mix."
+    },
+    "formatVerifiedOn": {
+      "type": ["string", "null"],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO date on which this format was confirmed against the real test at an RTO. Ships null. While null the pre-exam screen must say the format is unconfirmed - the app never prints a verification date it does not have."
+    }
+  }
+}

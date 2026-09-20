@@ -1,0 +1,19 @@
+{
+  "$schema": "./exam-config.schema.json",
+  "questionCount": 20,
+  "passMark": 12,
+  "timing": {
+    "mode": "per-question",
+    "secondsPerQuestion": 30,
+    "totalSeconds": null
+  },
+  "allowBackNavigation": false,
+  "allowSkip": false,
+  "negativeMark": 0,
+  "sectionMix": {
+    "road-signs": 8,
+    "rules-of-road-regulations": 7,
+    "general-driving-principles": 5
+  },
+  "formatVerifiedOn": null
+}
