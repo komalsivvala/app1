@@ -7,6 +7,8 @@ import raw from '@/content/exam-config.json';
 
 export type TopicId = 'road-signs' | 'rules-of-road-regulations' | 'general-driving-principles';
 
+export const TOPICS: readonly TopicId[] = ['road-signs', 'rules-of-road-regulations', 'general-driving-principles'];
+
 export interface ExamConfig {
   readonly questionCount: number;
   readonly passMark: number;
