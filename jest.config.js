@@ -7,10 +7,10 @@
  */
 module.exports = {
   preset: 'jest-expo',
-  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
+  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1', '\\.svg$': '<rootDir>/src/test/svg-mock.tsx' },
   testMatch: ['<rootDir>/src/**/*.test.tsx'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|expo-router|expo-sqlite|expo-font|expo-localization|expo-modules-core)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|expo-router|expo-sqlite|expo-font|expo-localization|expo-modules-core|react-native-svg|@shopify/flash-list)',
   ],
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
 };

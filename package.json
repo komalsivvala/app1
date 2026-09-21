@@ -24,6 +24,7 @@
     "test:jest": "jest --ci",
     "test": "npm run validate:config && npm run validate:content && npm run check:i18n && npm run test:scripts && npm run test:node && npm run test:jest",
     "check": "npm run typecheck && npm run lint && npm test",
+    "content:draw": "python3 pipeline/03_draw_signs.py",
     "content:ingest": "python3 pipeline/02_ingest_csv.py pipeline/raw/supplied/LLR_Andhra_Pradesh.csv --out pipeline/build/records.json",
     "content:validate": "python3 pipeline/05_validate.py --strict",
     "content:emit": "python3 pipeline/06_emit.py --ts-out src/content/questions.ts",
@@ -36,6 +37,7 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo/vector-icons": "^15.1.1",
+    "@shopify/flash-list": "^2.0.2",
     "expo": "~57.0.24",
     "expo-constants": "~57.0.19",
     "expo-font": "~57.0.4",
@@ -55,6 +57,7 @@
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-svg": "^15.15.4",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.10.1"
   },
@@ -69,6 +72,7 @@
     "jest-expo": "~57.0.5",
     "playwright": "^1.56.1",
     "prettier": "^3.9.8",
+    "react-native-svg-transformer": "^1.5.3",
     "react-test-renderer": "^19.2.3",
     "tsx": "^4.23.15",
     "typescript": "~6.0.3"
