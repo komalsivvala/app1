@@ -63,6 +63,8 @@ function Navigation() {
           <Stack.Screen name="exam/intro" />
           {/* Forward-only: no swipe-back, no header back. Exit goes through a confirm dialog (M3). */}
           <Stack.Screen name="exam/session" options={{ gestureEnabled: false }} />
+          <Stack.Screen name="exam/result" options={{ gestureEnabled: false }} />
+          <Stack.Screen name="exam/review/[attemptId]" />
           <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
           <Stack.Screen name="about" options={{ presentation: 'modal' }} />
           <Stack.Screen name="guide/index" options={{ presentation: 'modal' }} />

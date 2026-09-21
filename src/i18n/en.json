@@ -34,11 +34,26 @@
     "startMock": "Start Mock Test",
     "resumeMock": "Resume your test",
     "cards": {
-      "learn": { "title": "Learn", "subtitle": "The full question bank, by topic" },
-      "signs": { "title": "Road Signs", "subtitle": "Mandatory, cautionary, informatory" },
-      "weakAreas": { "title": "Weak Areas", "subtitle": "Practise what you got wrong" }
+      "learn": {
+        "title": "Learn",
+        "subtitle": "The full question bank, by topic"
+      },
+      "signs": {
+        "title": "Road Signs",
+        "subtitle": "Mandatory, cautionary, informatory"
+      },
+      "weakAreas": {
+        "title": "Weak Areas",
+        "subtitle": "Practise what you got wrong"
+      }
     },
-    "guide": "Documents & the RTO process"
+    "guide": "Documents & the RTO process",
+    "resume": {
+      "title": "You have an unfinished test",
+      "body": "Pick up where you left off, or discard it and start fresh.",
+      "resume": "Resume your test",
+      "discard": "Discard it"
+    }
   },
   "preExam": {
     "title": "Mock Test",
@@ -57,8 +72,21 @@
     "start": "Start"
   },
   "exam": {
-    "placeholder": "The exam engine arrives with milestone M3.",
-    "progress": "{{current}} / {{total}}"
+    "progress": "{{current}} / {{total}}",
+    "progressA11y": "Question {{current}} of {{total}}",
+    "timeA11y": "{{percent}}% of the time remaining",
+    "option": "Option {{n}} of {{total}}: {{text}}",
+    "selected": "selected",
+    "next": "Next",
+    "finish": "Finish",
+    "previous": "Previous",
+    "exit": {
+      "title": "Leave the test?",
+      "body": "This test will be discarded. Your earlier results are kept.",
+      "discard": "Leave and discard",
+      "stay": "Stay"
+    },
+    "loading": "Preparing your paper…"
   },
   "learn": {
     "title": "Learn",
@@ -125,5 +153,34 @@
     "settingsButton": "Settings",
     "themeOption": "Set appearance to {{option}}",
     "externalLink": "Opens in your browser"
+  },
+  "result": {
+    "passed": "PASSED",
+    "notPassed": "NOT PASSED",
+    "score": "{{correct}} / {{total}}",
+    "needed": "{{passMark}} needed to pass",
+    "byTopic": "By topic",
+    "topicLine": "{{correct}} of {{total}}",
+    "review": "Review all answers",
+    "home": "Back to home",
+    "encouragement": "Review your answers — most people pass on the next attempt.",
+    "unreliable": "This phone's clock changed during the test, so the time limit could not be enforced.",
+    "notFound": "That test could not be found."
+  },
+  "review": {
+    "title": "Review",
+    "filterAll": "All",
+    "filterWrong": "Not correct",
+    "question": "Question {{n}}",
+    "yourAnswer": "Your answer",
+    "correctAnswer": "Correct answer",
+    "notAnswered": "Not answered",
+    "timedOut": "Time ran out",
+    "skipped": "Skipped",
+    "why": "Why",
+    "bookmark": "Bookmark this question",
+    "removeBookmark": "Remove bookmark",
+    "allCorrect": "Every answer was correct.",
+    "missingQuestion": "This question is no longer in the question bank."
   }
 }
