@@ -1,0 +1,7 @@
+# GitHub Pages: publish the docs/ folder of the default branch
+# (repository Settings → Pages → Source: Deploy from a branch → /docs).
+title: "AP Learner's Licence — Practice Test"
+description: "An unofficial, offline practice app for the Andhra Pradesh learner's licence test."
+theme: jekyll-theme-primer
+exclude:
+  - screenshots

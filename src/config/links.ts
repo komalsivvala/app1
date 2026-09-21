@@ -7,7 +7,10 @@ export const links = {
   /** The source citation Google Play asks for: a link users can verify. */
   sourceQuestionBank: 'https://www.aptransport.org/html/llr-question-bank.html',
   /** Hosted on GitHub Pages at M7. Until then the policy is the repo doc. */
-  privacyPolicy: 'https://github.com/komalsivvala/app1/blob/main/docs/privacy-policy.md',
+  // GitHub Pages, published from docs/ of the default branch (see
+  // docs/store-submission.md §2). Until Pages is enabled this 404s — the
+  // submission checklist has it as a blocker.
+  privacyPolicy: 'https://komalsivvala.github.io/app1/privacy-policy/',
   /** The "report a wrong answer" mailto. null hides the row. Set at M7 with an
    *  address the owner is happy to publish — never an address guessed here. */
   supportEmail: null as string | null,
