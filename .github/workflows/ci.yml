@@ -18,8 +18,11 @@ jobs:
       # No `npm ci` on purpose: G-CONFIG has zero dependencies so it keeps
       # gating the exam format even if the app's install is broken, and it
       # gated the format before the app existed at all.
-      - name: Validate exam-config.json
+      - name: Validate exam-config.json (G-CONFIG)
         run: node scripts/validate-exam-config.mjs
+
+      - name: Validate content-config.json (G-LANG)
+        run: node scripts/validate-content-config.mjs
 
       # `node --test <dir>` is broken on Node 22.22 (it tries to execute the
       # directory as a test file). The glob form works; do not "simplify" it.
@@ -49,9 +52,27 @@ jobs:
           .venv/bin/python pipeline/02_ingest_csv.py \
             pipeline/raw/supplied/LLR_Andhra_Pradesh.csv \
             --out pipeline/build/records.json
-          # Not --strict: G-BILINGUAL is expected to fail until Telugu arrives.
-          # The report is what CI surfaces; it must not silently go green either.
-          .venv/bin/python pipeline/05_validate.py
+          # --strict: every blocking gate must pass. content-config.json says
+          # which languages are required, so this is green for English-only v1
+          # and turns red the moment "te" is added without Telugu content.
+          .venv/bin/python pipeline/05_validate.py --strict
+
+      - name: Emit bundle and check it is byte-identical to the committed module
+        run: |
+          .venv/bin/python pipeline/06_emit.py --ts-out src/content/questions.ts
+          # A generated file that drifts from its generator is a silent content
+          # change. Only the generatedAt timestamp is allowed to differ.
+          git diff --ignore-matching-lines='generatedAt\|generated 20' --exit-code src/content/questions.ts pipeline/id-map.json
+
+  content-typecheck:
+    name: questions.ts typechecks (strict)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run typecheck:content
 
       - name: Source manifest is valid and complete
         run: |

@@ -1,8 +1,7 @@
 # AP Learner's Licence — Practice Test
 
-An offline, bilingual (తెలుగు / English) practice app for the **Andhra Pradesh Learner's
-Licence (LLR) computer test**, built from the question bank published by the AP Transport
-Department.
+An offline practice app for the **Andhra Pradesh Learner's Licence (LLR) computer test**.
+v1 is English-only; Telugu (తెలుగు) is v1.1 — see PRD Amendment A1.
 
 > **This is an unofficial study aid.** It is not affiliated with, endorsed by, or
 > connected to the Transport Department, Government of Andhra Pradesh, the Ministry of
@@ -23,26 +22,30 @@ No accounts. No ads. No tracking. No network required — ever.
 |---|---|
 | Phase 0 — exam-format research, `exam-config.json`, gate `G-CONFIG` | ✅ done |
 | M1 — content pipeline built and tested end-to-end | ✅ done |
-| M1 — content **shippable** | ⛔ **blocked: the supplied dataset has no Telugu** |
+| M1 — content shippable | ✅ **277 questions, every blocking gate green** (English-only, PRD A1) |
 | M2 — app foundation | not started |
 
-**The pipeline works; the content is one language short.** 277 questions ingest cleanly,
-every answer key is valid, every topic clears 3× its `sectionMix` slot — and there are
-**zero Telugu characters** in the entire dataset. Bilingual content is never-cuttable
-(`01-PRD.md` §6), so the gates fail and nothing ships:
+**`src/content/questions.ts` is real, typed, and ready to import.** 277 questions, 91 / 108 / 78
+by topic, every answer key valid, IDs stable across re-runs. It typechecks under `strict` +
+`noUncheckedIndexedAccess` and is 260 KB.
 
 ```
-$ .venv/bin/python pipeline/05_validate.py
-[FAIL] G-BILINGUAL  277 violations — no Telugu for: text, option1..4
-  TOTAL   0 of 277 shippable
-
-$ .venv/bin/python pipeline/05_validate.py --allow-english-only
-  TOTAL 277 of 277 shippable    quarantined: 0
+$ npm run content:validate
+[PASS] G-STRUCT  G-BILINGUAL  G-TELUGU  G-ASSET  G-DEDUP  G-KEY  G-MERGE  G-MIX  G-IDSTABLE
+  TOTAL  277 of 277 ingested    quarantined: 0
+✓ all blocking gates passed
 ```
 
-**Read [`docs/07-content-assessment.md`](docs/07-content-assessment.md) before doing
-anything else** — it has the five open decisions, including a department-confirmed format
-for Telangana that contradicts our timing model.
+**Why English-only.** The dataset has zero Telugu, the AP Telugu PDFs are unreachable from the
+build environment, and machine translation is forbidden. So v1 invokes the pre-agreed fallback,
+recorded as **Amendment A1** at the top of [`docs/01-PRD.md`](docs/01-PRD.md). Language is a
+config, not a code path: `src/content/content-config.json` lists `["en"]`; adding `"te"` re-arms
+every Telugu gate and widens the `Lang` type in the generated module.
+
+**Two things to know before writing store copy** — both in
+[`docs/07-content-assessment.md`](docs/07-content-assessment.md): the bank's rows cite the
+*Telangana*-published bank, not `aptransport.org` (§3), and Telangana's department-confirmed
+format is a 10-minute whole-paper clock, which contradicts our timing default (§5).
 
 ## What you can run today
 
@@ -61,10 +64,14 @@ The content pipeline needs Python:
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r pipeline/requirements.txt
 
-.venv/bin/python pipeline/test_pipeline.py          # 21 tests, incl. ID stability
+.venv/bin/python pipeline/test_pipeline.py          # 29 tests, incl. ID stability
 npm run content:ingest                              # CSV -> canonical records
-npm run content:validate                            # every gate from 02-TRD.md §4
+npm run content:validate                            # every gate, --strict
+npm run content:emit                                # -> src/content/questions.ts
+npm run typecheck:content                           # tsc --strict on the generated module
 ```
+
+`npm test` runs both config gates (`G-CONFIG`, `G-LANG`) and their 36 tests with no install.
 
 ```
 $ npm run validate:config
@@ -144,10 +151,14 @@ pipeline/             Python content pipeline
   reports/            validation output, human-review queues
 scripts/
   validate-exam-config.mjs   gate G-CONFIG (zero deps)
-  __tests__/                 its 22 tests
+  validate-content-config.mjs gate G-LANG (zero deps)
+  __tests__/                 36 tests across both
 src/content/
   exam-config.json           the single source of exam-format truth
   exam-config.schema.json    its JSON Schema
+  content-config.json        which languages ship (v1: en). Gates and app both read it
+  content-config.schema.json its JSON Schema
+  questions.ts               GENERATED — 277 typed questions. Never edit; npm run content:emit
 ```
 
 `src/`, `app/` and the Expo project are filled in at M2, per `docs/02-TRD.md` §3.
