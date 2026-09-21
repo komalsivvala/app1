@@ -95,7 +95,10 @@
       "placeholder": "Search questions",
       "hint": "Search works in every language the app ships.",
       "empty": "No questions match. Try a shorter word.",
-      "results": "{{count}} results",
+      "results": {
+        "one": "1 result",
+        "other": "{{count}} results"
+      },
       "a11y": "Search the question bank"
     },
     "flashcards": {
@@ -143,8 +146,16 @@
     "noAttempts": "No tests yet. Your history and weak areas will appear here after your first mock test.",
     "history": "Attempt history",
     "byTopic": "Accuracy by topic",
+    "topicLine": "{{pct}}% of {{answered}}",
     "practiceWeak": "Practise weak areas",
-    "bookmarks": "Bookmarks"
+    "practiceEmpty": "Weak areas come from your mock results — take a mock test first.",
+    "bookmarks": "Bookmarks",
+    "bookmarksCount": "{{count}} saved",
+    "attemptScore": "{{correct}} / {{total}}",
+    "passed": "Passed",
+    "notPassed": "Not passed",
+    "untimed": "clock changed",
+    "openReview": "Open the review of this test"
   },
   "settings": {
     "title": "Settings",
@@ -240,6 +251,47 @@
     "seeSign": "About this sign"
   },
   "guide": {
-    "placeholder": "Documents, fees and the RTO process arrive with milestone M5."
+    "title": "Documents & the RTO process",
+    "intro": "What to take, what it costs and how to book. Every item is dated — fees and rules change, so confirm on the official portal before you go.",
+    "verified": "Verified {{date}}",
+    "verifyNote": "Verify on the official portal.",
+    "openPortal": "Open Parivahan Sarathi",
+    "openState": "Open AP Transport",
+    "placeholder": "Documents, fees and the RTO process arrive with milestone M5.",
+    "expand": "Expand {{section}}",
+    "collapse": "Collapse {{section}}"
+  },
+  "practice": {
+    "title": "Practice",
+    "progress": "{{current}} / {{total}}",
+    "correct": "Correct",
+    "incorrect": "Not quite",
+    "why": "Why",
+    "next": "Next",
+    "finish": "Finish",
+    "preparing": "Choosing your weak areas…",
+    "empty": {
+      "title": "No weak areas right now",
+      "body": "Every question you have met in a mock test is going well. Take a full mock test to find new ones.",
+      "noMock": "Take a mock test first — weak areas come from your results.",
+      "back": "Back"
+    },
+    "summary": {
+      "title": "Practice finished",
+      "score": "{{correct}} of {{total}} correct",
+      "revisit": "To revisit",
+      "allCorrect": "Nothing to revisit — all correct.",
+      "again": "Practise again",
+      "done": "Done"
+    }
+  },
+  "bookmarks": {
+    "title": "Bookmarks",
+    "empty": "No bookmarks yet. Tap the bookmark icon on any question to save it here.",
+    "revise": "Revise these",
+    "count": {
+      "one": "1 question",
+      "other": "{{count}} questions"
+    }
   }
 }

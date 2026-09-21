@@ -25,10 +25,15 @@ i18n.defaultLocale = DEFAULT_LANGUAGE;
 i18n.enableFallback = true;
 i18n.locale = DEFAULT_LANGUAGE;
 
-/** Dot-path keys of en.json, so a typo in t('home.startMock') is a compile error. */
+/** Dot-path keys of en.json, so a typo in t('home.startMock') is a compile error.
+ *  A `{ one, other }` object is a plural form and counts as ONE key — i18n-js
+ *  picks the form from `count` (t('bookmarks.count', { count })). */
+type PluralForms = { readonly one: string; readonly other: string };
 type Leaves<T, P extends string = ''> = T extends string
   ? P
-  : { [K in keyof T & string]: Leaves<T[K], P extends '' ? K : `${P}.${K}`> }[keyof T & string];
+  : T extends PluralForms
+    ? P
+    : { [K in keyof T & string]: Leaves<T[K], P extends '' ? K : `${P}.${K}`> }[keyof T & string];
 export type TKey = Leaves<typeof en>;
 
 export function translate(key: TKey, options?: TranslateOptions): string {
