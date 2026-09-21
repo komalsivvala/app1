@@ -57,6 +57,8 @@ A **zero-backend, content-bundled mobile app**. Everything ships inside the bina
 
 ## 3. Project structure
 
+> **[M2 note]** Expo SDK 57's template places routes under **`src/app/`**, and this project follows it. Read every `app/` path below as `src/app/`. Everything else in the tree is as shown.
+
 ```
 app/                          # expo-router routes
   (tabs)/

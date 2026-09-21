@@ -88,15 +88,15 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 
 ## 4. M2 — App foundation · Days 5–7
 
-- [ ] Expo Router: 4 tabs + exam stack + modal routes
-- [ ] `design/tokens.ts` from the UI/UX spec — exact hex values, both themes
-- [ ] `typography.ts` implementing `lineHeightFor(role, script, size)` — numbers from `03-UIUX-Design.md` §2, **multiplied by `PixelRatio.getFontScale()`**
-- [ ] Bundle Noto Sans Telugu + Inter via `expo-font`
-- [ ] i18n: `en.json` / `te.json`, `expo-localization` detection, kv-store persistence read synchronously at boot
-- [ ] CI check: i18n key parity + no hardcoded user-facing strings
-- [ ] SQLite: `SQLiteProvider`, `migrate()`, schema v1, migration test
-- [ ] First-launch language sheet; Home shell
-- [ ] **Build to a real mid-range Android device and inspect Telugu at 100% and 200% text scale**
+- [x] Expo Router: 4 tabs + exam stack + modal routes
+- [x] `design/tokens.ts` from the UI/UX spec — exact hex values, both themes *(every pair, on-bg and on-fill, asserted ≥ AA in CI; the spec's printed ratios reproduced to 2 dp)*
+- [x] `typography.ts` implementing `lineHeightFor(role, script, size, fontScale)` — numbers from `03-UIUX-Design.md` §2, **multiplied by the live font scale** *(the parameter is required, not defaulted, so forgetting it is a compile error)*
+- [x] Bundle ~~Noto Sans Telugu +~~ Inter via `expo-font` *[A1]*
+- [x] i18n: `en.json` ~~/ `te.json`~~ *[A1]*, `expo-localization` detection, kv-store persistence read synchronously at boot
+- [x] CI check: i18n key parity (`G-I18N`) + no hardcoded user-facing strings (`react/jsx-no-literals` as an error)
+- [x] SQLite: `SQLiteProvider`, `migrate()`, schema v1, migration test *(against real SQLite; includes the second-connection `foreign_keys` case from `05-Data-Schema.md` §3.1)*
+- [x] First-launch language sheet *(built; skipped while one language ships)*; Home shell
+- [ ] **Build to a real mid-range Android device and inspect text at 100% and 200% text scale** — *not done: no device in the build environment. Web screenshot matrix captured instead (`docs/screenshots/`). This gate stays open.*
 
 **Gate:** Telugu renders correctly at both scales on physical hardware. Not in a simulator.
 
