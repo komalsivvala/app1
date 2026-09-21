@@ -9,7 +9,7 @@ export default function GuideScreen() {
   return (
     <Screen testID="guide">
       <ScreenHeader title={t('home.guide')} back />
-      <AppText color="secondary">{t('learn.placeholder')}</AppText>
+      <AppText color="secondary">{t('guide.placeholder')}</AppText>
     </Screen>
   );
 }

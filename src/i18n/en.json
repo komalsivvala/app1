@@ -91,11 +91,52 @@
   "learn": {
     "title": "Learn",
     "browse": "Browse by topic",
-    "placeholder": "Question lists, flashcards and search arrive with milestone M4."
+    "search": {
+      "placeholder": "Search questions",
+      "hint": "Search works in every language the app ships.",
+      "empty": "No questions match. Try a shorter word.",
+      "results": "{{count}} results",
+      "a11y": "Search the question bank"
+    },
+    "flashcards": {
+      "title": "Flashcards",
+      "entry": "Flashcards",
+      "entrySubtitle": "Test yourself, one card at a time",
+      "progress": "{{current}} / {{total}}",
+      "showAnswer": "Show answer",
+      "knewIt": "I knew it",
+      "didntKnow": "I didn't know",
+      "done": "Deck finished",
+      "summary": "{{known}} known · {{unknown}} to revisit",
+      "again": "Go again",
+      "back": "Back to Learn",
+      "allTopics": "All topics"
+    },
+    "status": {
+      "mastered": "Correct last time",
+      "wrong": "Wrong last time",
+      "unseen": "Not seen yet",
+      "seen": "Seen"
+    },
+    "count": "{{count}} questions"
   },
   "signs": {
     "title": "Road Signs",
-    "placeholder": "The signs chart arrives with milestone M4."
+    "search": "Search signs",
+    "category": {
+      "mandatory": "Mandatory",
+      "cautionary": "Cautionary",
+      "informatory": "Informatory"
+    },
+    "categoryHint": {
+      "mandatory": "Circular. You must obey these.",
+      "cautionary": "Triangular. A hazard ahead.",
+      "informatory": "Rectangular. Facilities and directions."
+    },
+    "empty": "No signs match.",
+    "questions": "Questions about this sign",
+    "noQuestions": "No questions reference this sign yet.",
+    "a11yTile": "{{name}}, {{category}} sign"
   },
   "progress": {
     "title": "Progress",
@@ -182,5 +223,23 @@
     "removeBookmark": "Remove bookmark",
     "allCorrect": "Every answer was correct.",
     "missingQuestion": "This question is no longer in the question bank."
+  },
+  "question": {
+    "title": "Question",
+    "showAnswer": "Show answer",
+    "correct": "Correct",
+    "incorrect": "Not quite",
+    "answerIs": "The correct answer is marked.",
+    "why": "Why",
+    "legalRef": "Reference",
+    "next": "Next question",
+    "bookmark": "Bookmark this question",
+    "removeBookmark": "Remove bookmark",
+    "missing": "This question is no longer in the question bank.",
+    "sign": "Road sign: {{alt}}",
+    "seeSign": "About this sign"
+  },
+  "guide": {
+    "placeholder": "Documents, fees and the RTO process arrive with milestone M5."
   }
 }

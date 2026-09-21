@@ -1,18 +1,19 @@
+import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 
 import { AppText } from '@/components/AppText';
+import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { SearchField } from '@/components/SearchField';
 import { TopicCard } from '@/components/TopicCard';
 import { QUESTIONS } from '@/content/questions';
-import type { TopicId } from '@/engine/exam-config';
+import { TOPICS, type TopicId } from '@/engine/exam-config';
 import { useI18n } from '@/i18n/use-i18n';
-
-const TOPICS: readonly TopicId[] = ['road-signs', 'rules-of-road-regulations', 'general-driving-principles'];
 
 export default function LearnScreen() {
   const { t } = useI18n();
-  // 277 questions: counting on each render would be fine; memoised anyway.
+  const router = useRouter();
   const counts = useMemo(() => {
     const c: Record<TopicId, number> = { 'road-signs': 0, 'rules-of-road-regulations': 0, 'general-driving-principles': 0 };
     for (const q of QUESTIONS) c[q.topic] += 1;
@@ -22,13 +23,26 @@ export default function LearnScreen() {
   return (
     <Screen testID="learn">
       <ScreenHeader title={t('learn.title')} />
+      {/* Tapping the field opens the search screen, where the index is built lazily. */}
+      <Card onPress={() => router.push('/learn/search')} accessibilityLabel={t('learn.search.a11y')} testID="learn-search-entry" style={{ padding: 0, borderWidth: 0 }}>
+        <SearchField value="" onChangeText={() => router.push('/learn/search')} placeholder={t('learn.search.placeholder')} accessibilityLabel={t('learn.search.a11y')} />
+      </Card>
       <AppText color="secondary">{t('learn.browse')}</AppText>
       {TOPICS.map((topic) => (
-        <TopicCard key={topic} title={t(`topics.${topic}`)} subtitle={t('common.questions', { count: counts[topic] })} accuracyPct={null} />
+        <TopicCard
+          key={topic}
+          title={t(`topics.${topic}`)}
+          subtitle={t('learn.count', { count: counts[topic] })}
+          accuracyPct={null}
+          onPress={() => router.push({ pathname: '/learn/[topic]', params: { topic } })}
+        />
       ))}
-      <AppText variant="caption" color="secondary">
-        {t('learn.placeholder')}
-      </AppText>
+      <Card onPress={() => router.push('/learn/flashcards')} accessibilityLabel={t('learn.flashcards.entry')} accessibilityHint={t('learn.flashcards.entrySubtitle')} testID="learn-flashcards-entry">
+        <AppText variant="heading">{t('learn.flashcards.entry')}</AppText>
+        <AppText variant="caption" color="secondary">
+          {t('learn.flashcards.entrySubtitle')}
+        </AppText>
+      </Card>
     </Screen>
   );
 }
