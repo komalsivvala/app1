@@ -64,15 +64,44 @@ jobs:
           # change. Only the generatedAt timestamp is allowed to differ.
           git diff --ignore-matching-lines='generatedAt\|generated 20' --exit-code src/content/questions.ts pipeline/id-map.json
 
-  content-typecheck:
-    name: questions.ts typechecks (strict)
+  app:
+    name: App — typecheck, lint, i18n, unit, component
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm run typecheck:content
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run check:i18n
+      # Pure logic on Node's own runner against real SQLite (node:sqlite).
+      - run: npm run test:node
+      # Component rendering under jest-expo + RNTL.
+      - run: npm run test:jest
+
+  web-screenshots:
+    name: Web export + screenshot matrix
+    runs-on: ubuntu-latest
+    needs: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run export:web
+      - run: npm run screenshots
+        env:
+          SCREENSHOT_DIR: screenshots-ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots-ci/
 
       - name: Source manifest is valid and complete
         run: |
