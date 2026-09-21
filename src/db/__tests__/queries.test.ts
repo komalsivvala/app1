@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { NodeSqliteDb } from './node-sqlite-db';
 import { migrate } from '../migrations';
 import {
+  hasCompletedMock,
   perTopicAccuracy, weakAreaPriority, latestInProgressAttempt, paperForAttempt,
   lastFiveCompletedMocks, isReady, getMeta, setMeta, toggleBookmark, bookmarkedIds,
 } from '../queries';
@@ -125,4 +126,16 @@ test('toggleBookmark flips and reports the new state', async () => {
   assert.deepEqual(await bookmarkedIds(db), [{ question_id: 'rrr-014', created_at: 1000 }]);
   assert.equal(await toggleBookmark(db, 'rrr-014', 2000), false);
   assert.deepEqual(await bookmarkedIds(db), []);
+});
+
+test('an in-progress PRACTICE set is never offered for resume as a mock; hasCompletedMock reflects mocks only', async () => {
+  const db = await fresh();
+  await attempt(db, { mode: 'practice', status: 'in_progress', startedAt: 500 });
+  assert.equal(await latestInProgressAttempt(db), null);
+  assert.equal((await latestInProgressAttempt(db, 'practice'))?.mode, 'practice');
+  assert.equal(await hasCompletedMock(db), false);
+  await attempt(db, { mode: 'practice', status: 'completed', startedAt: 600, correct: 10 });
+  assert.equal(await hasCompletedMock(db), false, 'a completed practice set is not a mock');
+  await attempt(db, { startedAt: 700, correct: 12, passed: 1 });
+  assert.equal(await hasCompletedMock(db), true);
 });

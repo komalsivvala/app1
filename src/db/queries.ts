@@ -58,6 +58,7 @@ export function weakAreaPriority(db: Db): Promise<WeakAreaRow[]> {
 
 export interface InProgressAttempt {
   readonly id: number;
+  readonly mode: 'mock' | 'practice';
   readonly started_at: number;
   readonly question_count: number;
   readonly config_snapshot: string;
@@ -73,16 +74,22 @@ export interface PaperRow {
   readonly outcome: 'correct' | 'wrong' | 'timeout' | 'skipped' | null;
 }
 
-/** Resume: reads the paper, never re-samples. */
-export function latestInProgressAttempt(db: Db): Promise<InProgressAttempt | null> {
+/** Resume: reads the paper, never re-samples. Mock only by default — a
+ *  half-finished practice set is abandoned on leaving, never offered back. */
+export function latestInProgressAttempt(db: Db, mode: 'mock' | 'practice' = 'mock'): Promise<InProgressAttempt | null> {
   return db.getFirstAsync<InProgressAttempt>(
     `
-    SELECT id, started_at, question_count, config_snapshot
-    FROM attempts WHERE status = 'in_progress'
+    SELECT id, mode, started_at, question_count, config_snapshot
+    FROM attempts WHERE status = 'in_progress' AND mode = ?
     ORDER BY started_at DESC LIMIT 1
   `,
-    [],
+    [mode],
   );
+}
+
+export async function hasCompletedMock(db: Db): Promise<boolean> {
+  const row = await db.getFirstAsync<{ n: number }>(`SELECT COUNT(*) AS n FROM attempts WHERE mode = 'mock' AND status = 'completed'`, []);
+  return (row?.n ?? 0) > 0;
 }
 
 export function paperForAttempt(db: Db, attemptId: number): Promise<PaperRow[]> {
