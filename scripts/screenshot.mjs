@@ -9,22 +9,15 @@
  * Serves dist/ itself with the COOP/COEP headers expo-sqlite's web worker
  * wants, so no extra server package is needed.
  */
-import { createServer } from 'node:http';
-import { readFile, stat, mkdir } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { extname, join, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
+import { serveDist } from './lib/serve-dist.mjs';
 
 const DIST = resolve('dist');
 const OUT = resolve(process.env.SCREENSHOT_DIR ?? 'docs/screenshots');
 const PORT = Number(process.env.PORT ?? 4173);
-
-const MIME = {
-  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css',
-  '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon', '.ttf': 'font/ttf', '.otf': 'font/otf', '.woff': 'font/woff', '.woff2': 'font/woff2',
-  '.wasm': 'application/wasm', '.map': 'application/json',
-};
 
 /** Screens to capture: [name, route, testID that must be visible]. */
 const SCREENS = [
@@ -37,38 +30,29 @@ const SCREENS = [
   ['about', '/about', 'about'],
 ];
 
-async function resolveFile(urlPath) {
-  const clean = decodeURIComponent(urlPath.split('?')[0]);
-  const candidates = [clean, `${clean}.html`, join(clean, 'index.html')];
-  for (const c of candidates) {
-    const p = join(DIST, c);
-    if (!p.startsWith(DIST)) continue;
-    try {
-      if ((await stat(p)).isFile()) return p;
-    } catch { /* next */ }
+/** Stateful flows: drive the exam and capture session, result and review. */
+async function examFlow(page, base, shoot) {
+  const tid = (id) => page.getByTestId(id);
+  await page.goto(`${base}/exam/intro`, { waitUntil: 'networkidle' });
+  await tid('start-exam').click();
+  await tid('exam-question').first().waitFor({ state: 'visible', timeout: 15_000 });
+  await tid('exam-option-1').click();
+  await page.waitForTimeout(200);
+  await shoot('exam-session');
+  for (let guard = 0; guard < 25; guard++) {
+    await page.locator('[data-testid="exam-result"], [data-testid="exam-option-0"]').first().waitFor({ state: 'visible', timeout: 15_000 });
+    if (await tid('exam-result').count()) break;
+    await tid('exam-option-0').click();
+    await tid('exam-next').click();
+    await page.waitForTimeout(50);
   }
-  return join(DIST, 'index.html'); // SPA fallback for client-side routes
-}
-
-function serve() {
-  return new Promise((ok) => {
-    const server = createServer(async (req, res) => {
-      const file = await resolveFile(req.url ?? '/');
-      try {
-        const body = await readFile(file);
-        res.writeHead(200, {
-          'Content-Type': MIME[extname(file)] ?? 'application/octet-stream',
-          'Cross-Origin-Opener-Policy': 'same-origin',
-          'Cross-Origin-Embedder-Policy': 'credentialless',
-          'Cache-Control': 'no-store',
-        });
-        res.end(body);
-      } catch {
-        res.writeHead(404).end();
-      }
-    });
-    server.listen(PORT, '127.0.0.1', () => ok(server));
-  });
+  await tid('exam-result').waitFor({ state: 'visible', timeout: 15_000 });
+  await page.waitForTimeout(200);
+  await shoot('exam-result');
+  await tid('result-review').click();
+  await tid('review-item-0').waitFor({ state: 'visible', timeout: 15_000 });
+  await page.waitForTimeout(300);
+  await shoot('exam-review');
 }
 
 async function main() {
@@ -77,7 +61,8 @@ async function main() {
     process.exit(1);
   }
   await mkdir(OUT, { recursive: true });
-  const server = await serve();
+  const server = await serveDist(PORT);
+  const base = `http://127.0.0.1:${PORT}`;
   const launch = {};
   if (process.env.CHROME_PATH) launch.executablePath = process.env.CHROME_PATH;
   const browser = await chromium.launch(launch);
@@ -115,6 +100,21 @@ async function main() {
         for (const err of errors) console.log(`      ${err.slice(0, 200)}`);
       }
     }
+    // Stateful exam flow in a FRESH context (empty database).
+    const flowContext = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, colorScheme, reducedMotion: 'reduce' });
+    const flowPage = await flowContext.newPage();
+    try {
+      await examFlow(flowPage, base, async (name) => {
+        await flowPage.evaluate(() => document.fonts.ready);
+        await flowPage.screenshot({ path: join(OUT, `${name}-${colorScheme}.png`), fullPage: true });
+        console.log(`  ✓ ${name}-${colorScheme}.png`);
+      });
+    } catch (e) {
+      failures.push(`exam-flow-${colorScheme}: ${e.message.split('\n')[0]}`);
+      console.log(`  ✗ exam-flow-${colorScheme}: ${e.message.split('\n')[0]}`);
+      await flowPage.screenshot({ path: join(OUT, `exam-flow-${colorScheme}-FAILED.png`), fullPage: true }).catch(() => {});
+    }
+    await flowContext.close();
     await context.close();
   }
   await browser.close();
@@ -123,7 +123,7 @@ async function main() {
     console.error(`\n${failures.length} screenshot(s) failed`);
     process.exit(1);
   }
-  console.log(`\n${SCREENS.length * 2} screenshots -> ${OUT}`);
+  console.log(`\n${(SCREENS.length + 3) * 2} screenshots -> ${OUT}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

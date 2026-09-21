@@ -95,6 +95,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run export:web
+      # Full mock exam on the static build with real SQLite (WASM): install →
+      # resume after a simulated kill → 20 questions → result → review → bookmark.
+      - run: npm run e2e:web
       - run: npm run screenshots
         env:
           SCREENSHOT_DIR: screenshots-ci

@@ -57,3 +57,6 @@ yarn-error.*
 .env*.local
 *.tsbuildinfo
 example
+
+# e2e failure capture
+e2e-failure.png

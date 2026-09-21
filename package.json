@@ -30,7 +30,8 @@
     "content:test": "python3 pipeline/test_pipeline.py",
     "typecheck:content": "npx --yes -p typescript@5 tsc --noEmit --strict --noUncheckedIndexedAccess --target es2022 --module esnext --skipLibCheck src/content/questions.ts",
     "export:web": "expo export --platform web",
-    "screenshots": "node scripts/screenshot.mjs"
+    "screenshots": "node scripts/screenshot.mjs",
+    "e2e:web": "node scripts/e2e-web.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
