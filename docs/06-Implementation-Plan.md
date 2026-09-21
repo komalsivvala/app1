@@ -142,20 +142,20 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 
 ## 8. M6 — Explanations + polish · Days 20–23
 
-**Day 20–21 — explanations.** Write a 2–3 sentence bilingual explanation for every question, in batches by topic. Cite MV Act 1988 / CMVR 1989 sections **only when verified on `indiacode.nic.in`** — otherwise `legalRef: null`. This is the slowest content task; don't leave it to the last day.
+**Day 20–21 — explanations.** ~~Write a 2–3 sentence bilingual explanation for every question~~ *[A1: English]* — the dataset already carried one for all 277, so M6 **audited** them instead of rewriting (`docs/07-content-assessment.md` §10): 0 contradict the key, 1 leaked compilation framing (fixed via `text-fixes.json`; `G-FRAMING` now covers explanations), 21 position-dependent options verified and locked by the new `G-POSITION` gate. Cite MV Act 1988 / CMVR 1989 sections **only when verified on `indiacode.nic.in`** — otherwise `legalRef: null`. *Still null for all 277: the site is unreachable from the build environment; the 47 citations to check are listed in §10.*
 
 **Day 22 — accessibility.**
-- [ ] Contrast assertions on the token set in CI
-- [ ] Screen-reader labels on every interactive element, in the active language
-- [ ] Options announce as "Option 2 of 4: …"; timer announces at 50% and 10% only
-- [ ] 200% dynamic type on every screen, Telugu especially
-- [ ] Reduce-motion honoured
+- [x] Contrast assertions on the token set in CI *(M2; both on-bg and on-fill pairs)*
+- [x] Screen-reader labels on every interactive element, in the active language *(audited; now a zero-dependency gate `G-A11Y` — `scripts/check-a11y.mjs` — in `npm run check` and CI: every Pressable has a role, every icon control, input and pressable Card a label, and no raw `<Text>` outside AppText)*
+- [x] Options announce as "Option 2 of 4: …"; timer announces at 50% and 10% only *(OptionRow and ExamTimer tests)*
+- [x] 200% dynamic type on every screen~~, Telugu especially~~ *[A1]* — **web matrix at 200% captured (`docs/screenshots/*-light-200.png`) and every screen fixed to it; a device check is still owed.** What 200% broke and how it was fixed: topic-accuracy figures wrapped mid-number (the figure no longer shrinks; the label wraps instead), two-line list rows hid most of a stem (four lines at ≥ 1.5×), the three-column sign grid broke captions mid-word (two columns at ≥ 1.5×). Those two thresholds are the only places the app reads the font scale, and both are layout decisions, never font sizes. M6 also found and fixed a double-scaling bug: line height was multiplied by the font scale in JS although React Native already does it (`03-UIUX-Design.md` §2, M6 correction).
+- [x] Reduce-motion honoured *(M2; stack transitions fall back to fade)*
 
 **Day 23 — performance.**
-- [ ] Cold start < 2s on a 3GB-RAM Android
-- [ ] AAB under 40 MB; JS bundle under 4 MB (`expo-atlas`)
-- [ ] Confirm the timer tick doesn't re-render the exam screen
-- [ ] Screenshot matrix: every screen × {en, te} × {light, dark} × {100%, 200%}
+- [ ] Cold start < 2s on a 3GB-RAM Android — *needs a device; not measurable here*
+- [ ] AAB under 40 MB — *needs an Android build; not measurable here.* **JS bundle 3.70 MB < 4 MB ✓** (`expo export --platform android`, Hermes bytecode). Bundled assets cut from 10.76 MB to 2.30 MB by deep-importing the one icon font and three Inter weights actually used (`02-TRD.md` §8 M6 measurements)
+- [x] Confirm the timer tick doesn't re-render the exam screen *(ExamTimer test: eight 250 ms ticks, parent render count unchanged)*
+- [x] Screenshot matrix: every screen × {en~~, te~~ *[A1]*} × {light, dark} × {100%, 200%} — *200% captured in light only; text scale changes layout, not colour*
 
 ## 9. M7 — Store submission · Days 24–28
 
