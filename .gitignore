@@ -45,3 +45,15 @@ coverage/
 
 # generated pipeline artefacts (id-map.json is NOT ignored - it must be committed)
 pipeline/build/
+
+# --- from the SDK 57 template ---
+expo-env.d.ts
+.kotlin/
+.metro-health-check*
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.pem
+.env*.local
+*.tsbuildinfo
+example

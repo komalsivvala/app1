@@ -1,0 +1,10 @@
+node_modules
+.expo
+dist
+.venv
+pipeline/raw
+pipeline/build
+pipeline/reports
+src/content/questions.ts
+docs
+*.md
