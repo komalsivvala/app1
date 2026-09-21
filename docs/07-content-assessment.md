@@ -233,3 +233,24 @@ insertion at position 1 shifts nothing, and cosmetic reformatting mints nothing.
 4. **Accept the store-listing wording change (§3)** — "Telangana's published bank, which AP
    publishes in the same three parts", not "the official AP bank", until the AP PDFs are checked.
 5. ~~**Sign SVGs (§6)** — schedule ~67 redraws, or accept a mock exam that is 40% word-descriptions.~~ **Done at M4:** 68 signs drawn (`docs/screenshots/signs-*.png`), every sign question shows its artwork with the official stem.
+
+## 10. Explanation audit (M6)
+
+All 277 explanations were read against their question, key and distractors at M6, in
+topic order. The plan's "write a 2–3 sentence explanation for every question" was already
+satisfied by the dataset (277/277, median 75 characters), so M6 was an **audit, not a
+rewrite** — the app must not invent content, and an explanation the candidate can check
+against the statute is worth more than a longer one.
+
+| Check | Result |
+|---|---|
+| Explanation contradicts the key, or merely restates the answer | **0** |
+| Explanation under 30 characters | **0** (shortest: 31) |
+| Compilation framing inside an explanation | **1** — `rrr-086` ended "…older state banks still show the pre-2019 figure". Removed via `pipeline/text-fixes.json` (Q310); `G-FRAMING` now covers explanations too, with a narrower rule than for stems: an explanation may name Andhra Pradesh (it is the AP app), never another state or "the bank" |
+| Position-dependent options ("All of the above", "None of these", "Both B and C") | **21**, all correct: every "…of the above" is option D, and `gdp-065`'s "Both B and C" names options B and C, which exist and precede it. The app shows options in bank order and never shuffles; new blocking gate **`G-POSITION`** keeps it that way |
+| Statute citations quoted in explanation text | **63** (47 distinct: Regulations 2–31 of the Rules of the Road Regulations 1989, Sections 3–199A of the MV Act 1988). They arrived with the dataset and read consistently with the questions; **none could be verified against `indiacode.nic.in` from this environment**, so `legalRef` stays `null` for all 277 and the numbers appear only inside prose, as supplied |
+| Wording nits | `rs-022` (height limit): "It warns of a low structure" describes a mandatory sign as a warning. Meaning is clear; left as supplied, noted for the content owner |
+
+**What the audit does not claim.** Nothing here confirms a regulation number is right. When
+`indiacode.nic.in` is reachable, the 47 citations above are the list to check, and each
+confirmed one becomes a `legalRef` (`05-Data-Schema.md` §2) rather than a sentence.

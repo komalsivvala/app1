@@ -64,6 +64,11 @@
       "blocking": true,
       "violations": 0
     },
+    "G-POSITION": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
     "G-EXPLAIN": {
       "passed": true,
       "blocking": false,

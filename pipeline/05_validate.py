@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib_content import TOPICS, norm_text, shipped_languages, telugu_ratio  # noqa: E402
+from lib_content import TOPICS, framing_leak, norm_text, positional_option_problems, shipped_languages, telugu_ratio  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = Path(__file__).resolve().parent / "reports"
@@ -77,7 +77,8 @@ def main() -> int:
             Gate("G-MIX", "each topic has enough shippable questions for its sectionMix slot"),
             Gate("G-IDSTABLE", "every previously-mapped ID is present or explicitly retired"),
             Gate("G-SIGNS", "sign registry is well-formed and every sign has artwork and at least one question"),
-            Gate("G-FRAMING", "no question stem leaks the compilation's framing (state names, 'the bank')"),
+            Gate("G-FRAMING", "no stem or explanation leaks the compilation's framing (state names, 'the bank')"),
+            Gate("G-POSITION", "'All of the above' is last; 'Both B and C' names earlier options (options are never shuffled)"),
             Gate("G-EXPLAIN", f"every question has an explanation in every shipped language [{lang_list}]", blocking=False),
             Gate("G-STEM", "questions sharing a stem but differing in options", blocking=False),
         ]
@@ -196,11 +197,21 @@ def main() -> int:
             if not r.get("signId"):
                 shared_stem[stem].append(rid)
 
-        # G-FRAMING — a candidate must never read "under the Telangana bank…".
-        import re as _re
-        if _re.search(r"\b(Telangana|Andhra Pradesh|Delhi|Maharashtra)\b|\bthe bank\b|licence bank", r["text"]["en"]):
+        # G-FRAMING — a candidate must never read "under the Telangana bank…",
+        # in the stem or in the explanation.
+        if framing_leak(r["text"]["en"]):
             gates["G-FRAMING"].fail(rid, f"stem leaks framing: {r['text']['en'][:70]!r}")
             quarantine(rid, "G-FRAMING")
+        for lang in langs:
+            if framing_leak(r["explanation"].get(lang) or "", field="explanation"):
+                gates["G-FRAMING"].fail(rid, f"{lang} explanation leaks framing: {r['explanation'][lang][:70]!r}")
+                quarantine(rid, "G-FRAMING")
+
+        # G-POSITION — options are shown in bank order and never shuffled, so
+        # "All of the above" must be last and "Both B and C" must point back.
+        for problem in positional_option_problems([o.get("en") or "" for o in r["options"]]):
+            gates["G-POSITION"].fail(rid, problem)
+            quarantine(rid, "G-POSITION")
 
         # G-EXPLAIN (advisory)
         for lang in langs:

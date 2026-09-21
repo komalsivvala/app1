@@ -1,5 +1,5 @@
 {
-  "note": "Hand-authored edits to the ingested text, applied by 02_ingest_csv.py. Only for wording that leaks the compilation's own framing (state names, 'the bank') into a question a candidate will read. Never for answer keys. A stem change is carried across by previousContentHash so the question keeps its ID.",
+  "note": "Hand-authored edits to the ingested text, applied by 02_ingest_csv.py. Only for wording that leaks the compilation's own framing (state names, 'the bank', 'state banks') into a question or explanation a candidate will read. Never for answer keys. A stem change is carried across by previousContentHash so the question keeps its ID; an explanation is not part of the hash.",
   "fixes": {
     "Q163": {
       "question": "The maximum speed at which a two-wheeler may be driven is",
@@ -7,6 +7,9 @@
     },
     "Q123": {
       "explanation": "At a signal-controlled junction, wait for the green light before making the U-turn. Turning against the signal is an offence."
+    },
+    "Q310": {
+      "explanation": "The fine was raised from Rs 2,000 to Rs 10,000 with effect from 1 September 2019."
     }
   }
 }

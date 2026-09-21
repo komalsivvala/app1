@@ -170,3 +170,48 @@ def sentence_case(s: str) -> str:
         out.append(tok)
         start_of_sentence = tok.rstrip().endswith((".", "?", "!"))
     return "".join(out)
+
+
+# ---- framing and positional options (gates G-FRAMING, G-POSITION) ---------
+
+# A candidate must never read the compilation's own framing: "under the
+# Telangana bank…", "older state banks still show…". A STEM may not name any
+# state either — the official paper never does. An EXPLANATION may name
+# Andhra Pradesh (this is the AP app: "AP's speed schedule sets 50 km/h") but
+# not another state, and never the bank.
+_BANK = r"\bthe bank\b|\bstate banks?\b|licence bank|question bank"
+STEM_FRAMING_RE = re.compile(r"\b(Telangana|Andhra Pradesh|Delhi|Maharashtra)\b|" + _BANK, re.IGNORECASE)
+EXPLANATION_FRAMING_RE = re.compile(r"\b(Telangana|Delhi|Maharashtra)\b|" + _BANK, re.IGNORECASE)
+
+
+def framing_leak(text: str, *, field: str = "stem") -> bool:
+    pattern = STEM_FRAMING_RE if field == "stem" else EXPLANATION_FRAMING_RE
+    return bool(pattern.search(text or ""))
+
+
+_POSITIONAL_LAST = re.compile(r"^(all|none|both|either|neither|any)\s+of\s+(the\s+above|these|them)\b", re.IGNORECASE)
+_LETTER_REF = re.compile(r"^(?:both\s+)?([A-D])\s+(?:and|&)\s+([A-D])\b", re.IGNORECASE)
+
+
+def positional_option_problems(options: list[str]) -> list[str]:
+    """Options whose meaning depends on their position.
+
+    The app shows options in bank order and never shuffles them, so an option
+    that says "All of the above" must be last, and one that says "Both B and C"
+    must name earlier options that exist. Returns human-readable problems.
+    """
+    problems: list[str] = []
+    last = len(options) - 1
+    for i, raw in enumerate(options):
+        text = (raw or "").strip()
+        if _POSITIONAL_LAST.match(text) and i != last:
+            problems.append(f"option {i} {text!r} must be the last option")
+        m = _LETTER_REF.match(text)
+        if m:
+            refs = [ord(ch.upper()) - 65 for ch in m.groups()]
+            for r in refs:
+                if r >= i:
+                    problems.append(f"option {i} {text!r} refers to option {chr(65 + r)}, which is not before it")
+                elif r > last:
+                    problems.append(f"option {i} {text!r} refers to a missing option {chr(65 + r)}")
+    return problems

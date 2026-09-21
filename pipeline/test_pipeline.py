@@ -80,6 +80,25 @@ check("sentence_case is idempotent",
 check("telugu_ratio ignores digits and units", telugu_ratio("వేగం 50 కి.మీ") == 1.0)
 check("telugu_ratio flags mojibake", telugu_ratio("à°°à°¹à°¦à°¾à°°à°¿") < 0.9)
 check("telugu_ratio of empty string is 0", telugu_ratio("") == 0.0)
+
+from lib_content import framing_leak, positional_option_problems  # noqa: E402
+check("framing_leak catches state names and 'state banks' in any case",
+      framing_leak("Under the Telangana bank this is Q1") and framing_leak("older state banks still show it") and framing_leak("the licence bank says"))
+check("framing_leak leaves ordinary text alone",
+      not framing_leak("The fine was raised to Rs 10,000.") and not framing_leak("Keep left"))
+check("a stem may not name Andhra Pradesh; an explanation may (it is the AP app), but never another state or the bank",
+      framing_leak("In Andhra Pradesh the limit is") and not framing_leak("Andhra Pradesh's schedule sets 50 km/h", field="explanation")
+      and framing_leak("Telangana's schedule", field="explanation") and framing_leak("older state banks show", field="explanation"))
+check("positional: 'All of the above' last is fine",
+      positional_option_problems(["a", "b", "c", "All of the above"]) == [])
+check("positional: 'All of the above' not last is a problem",
+      positional_option_problems(["All of the above", "b", "c", "d"]) != [])
+check("positional: 'None of these' not last is a problem",
+      positional_option_problems(["a", "None of these", "c", "d"]) != [])
+check("positional: 'Both B and C' as D pointing back is fine",
+      positional_option_problems(["a", "b", "c", "Both B and C"]) == [])
+check("positional: 'Both C and D' as B points forward — a problem",
+      positional_option_problems(["a", "Both C and D", "c", "d"]) != [])
 check("every CSV category maps to a real topic",
       all(v in TOPICS for v in CATEGORY_TO_TOPIC.values()))
 
