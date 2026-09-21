@@ -93,7 +93,7 @@ export default function HomeScreen() {
       </Card>
       {/* Hidden until there is data — don't show an empty promise. */}
       {recent.length > 0 && (
-        <Card onPress={() => router.navigate('/progress')} accessibilityLabel={t('home.cards.weakAreas.title')} accessibilityHint={t('home.cards.weakAreas.subtitle')}>
+        <Card onPress={() => router.push('/practice/session')} accessibilityLabel={t('home.cards.weakAreas.title')} accessibilityHint={t('home.cards.weakAreas.subtitle')}>
           <AppText variant="heading">{t('home.cards.weakAreas.title')}</AppText>
           <AppText variant="caption" color="secondary">
             {t('home.cards.weakAreas.subtitle')}

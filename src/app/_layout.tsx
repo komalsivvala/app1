@@ -70,6 +70,9 @@ function Navigation() {
           <Stack.Screen name="learn/search" />
           <Stack.Screen name="question/[id]" />
           <Stack.Screen name="signs/[signId]" />
+          <Stack.Screen name="practice/session" options={{ gestureEnabled: false }} />
+          <Stack.Screen name="practice/summary" options={{ gestureEnabled: false }} />
+          <Stack.Screen name="bookmarks" />
           <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
           <Stack.Screen name="about" options={{ presentation: 'modal' }} />
           <Stack.Screen name="guide/index" options={{ presentation: 'modal' }} />

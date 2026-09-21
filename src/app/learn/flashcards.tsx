@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
@@ -8,9 +8,10 @@ import { Card } from '@/components/Card';
 import { QuestionCard } from '@/components/QuestionCard';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { localized } from '@/content';
-import { QUESTIONS } from '@/content/questions';
+import { localized, questionById } from '@/content';
+import { QUESTIONS, type Question } from '@/content/questions';
 import { useDb } from '@/db/provider';
+import { bookmarkedIds } from '@/db/queries';
 import { recordFlashcard } from '@/db/stats';
 import { useTheme } from '@/design/theme';
 import { radius, space } from '@/design/tokens';
@@ -27,11 +28,22 @@ export default function FlashcardsScreen() {
   const db = useDb();
   const { palette } = useTheme();
   const { language } = usePrefs();
-  const { topic } = useLocalSearchParams<{ topic?: string }>();
+  const { topic, set } = useLocalSearchParams<{ topic?: string; set?: string }>();
+  const [bookmarkDeck, setBookmarkDeck] = useState<readonly Question[] | null>(null);
+  useEffect(() => {
+    if (set !== 'bookmarks') return;
+    let live = true;
+    bookmarkedIds(db).then((rows) => {
+      if (live) setBookmarkDeck(rows.map((r) => questionById(r.question_id)).filter((q): q is Question => q !== undefined));
+    });
+    return () => {
+      live = false;
+    };
+  }, [db, set]);
   const deck = useMemo(() => {
-    const scoped = topic !== undefined && (TOPICS as readonly string[]).includes(topic) ? QUESTIONS.filter((q) => q.topic === topic) : QUESTIONS;
-    return scoped;
-  }, [topic]);
+    if (set === 'bookmarks') return bookmarkDeck ?? [];
+    return topic !== undefined && (TOPICS as readonly string[]).includes(topic) ? QUESTIONS.filter((q) => q.topic === topic) : QUESTIONS;
+  }, [topic, set, bookmarkDeck]);
   const [position, setPosition] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [known, setKnown] = useState(0);
@@ -39,6 +51,7 @@ export default function FlashcardsScreen() {
 
   const card = deck[position];
   const finished = card === undefined;
+  const loading = set === 'bookmarks' && bookmarkDeck === null;
 
   const assess = async (knewIt: boolean) => {
     if (card === undefined) return;
@@ -59,7 +72,7 @@ export default function FlashcardsScreen() {
   return (
     <Screen testID="flashcards">
       <ScreenHeader title={t('learn.flashcards.title')} back />
-      {finished ? (
+      {loading ? null : finished ? (
         <Card testID="flashcards-done">
           <AppText variant="heading">{t('learn.flashcards.done')}</AppText>
           <AppText color="secondary">{t('learn.flashcards.summary', { known, unknown })}</AppText>
