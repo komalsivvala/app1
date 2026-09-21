@@ -223,6 +223,16 @@ Never trust accumulated ticks — always recompute from persisted wall-clock tim
 | Search response | < 150 ms over the full bilingual bank | Index built lazily on first mount of the search screen, then memoised — **not at module scope**, which would run during evaluation on every cold start for every user, against a <2s budget |
 | JS bundle | < 4 MB | `expo-atlas` inspection |
 
+> **[M6 measurements]** `npx expo export --platform android` (Hermes bytecode, no device needed):
+>
+> | Measure | Value | Budget |
+> |---|---|---|
+> | JS bundle (`.hbc`) | **3.70 MB** | < 4 MB ✓ — 92% used; watch it |
+> | Bundled assets | **2.30 MB** (was 10.76 MB) | — |
+> | Cold start, AAB size | **not measured** — no device or Android SDK in the build environment | < 2 s, < 40 MB |
+>
+> The 8.5 MB of assets removed were fonts nobody rendered: `@expo/vector-icons`' index requires all 38 icon fonts, and `@expo-google-fonts/inter`'s index all 18 Inter files. Both are now deep-imported (`@expo/vector-icons/Ionicons`, `@expo-google-fonts/inter/400Regular` …), which is the whole fix; a lint rule is not worth it while there are two import sites, but re-check the asset list whenever a font package is added. What remains: Ionicons (381 KB), the three Inter weights (~1 MB) and Material Symbols (944 KB), which `expo-router` itself pulls in.
+
 **Tactics:** Hermes engine (default). `FlashList` for all long lists. `React.memo` on question and sign cells. Search index built lazily and memoised, never at module scope. SVGs as compiled components via `react-native-svg-transformer`, resolved through a generated `SIGN_ART` registry (`05-Data-Schema.md` §2.1) — a runtime path string cannot become a component. No unnecessary re-render of the exam screen on each timer tick — isolate the countdown into its own leaf component.
 
 ## 9. Testing strategy

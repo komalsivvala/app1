@@ -1,9 +1,10 @@
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { memo, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { ListStatus } from '@/db/stats';
 import { useTheme } from '@/design/theme';
+import { useTypography } from '@/design/use-typography';
 import { space, touch } from '@/design/tokens';
 
 import { AppText } from './AppText';
@@ -35,6 +36,8 @@ const ICON: Record<ListStatus, ComponentProps<typeof Ionicons>['name']> = {
  *  never split). Status carries an icon AND a label, never colour alone. */
 export const QuestionListRow = memo(function QuestionListRow({ index, text, status, statusLabel, signId, signAlt, onPress, testID }: QuestionListRowProps) {
   const { palette } = useTheme();
+  // Layout decision only: at large text a two-line clamp hides most of a stem.
+  const { fontScale } = useTypography();
   const color = status === 'mastered' ? palette.success.fill : status === 'wrong' ? palette.danger.fill : palette.text.secondary;
   return (
     <Pressable
@@ -53,7 +56,7 @@ export const QuestionListRow = memo(function QuestionListRow({ index, text, stat
           <SignArt signId={signId} alt={signAlt ?? ''} size={40} testID={`row-sign-${signId}`} />
         </View>
       )}
-      <AppText variant="body" numberOfLines={2} style={styles.text}>
+      <AppText variant="body" numberOfLines={fontScale >= 1.5 ? 4 : 2} style={styles.text}>
         {text}
       </AppText>
       {status !== undefined && (
