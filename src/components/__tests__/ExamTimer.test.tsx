@@ -45,3 +45,23 @@ test('remaining time is recomputed from the clock, never accumulated from ticks'
   });
   expect(screen.getByTestId('exam-timer-readout').props.children).toBe('0:10');
 });
+
+test('the 250 ms tick re-renders the timer leaf only — the parent (the exam screen) does not render again', async () => {
+  let t = 0;
+  const now = () => t;
+  const parentRenders = jest.fn();
+  function Parent() {
+    parentRenders();
+    return <ExamTimer deadline={30_000} totalMs={30_000} now={now} onExpire={() => {}} />;
+  }
+  await renderWithProviders(<Parent />);
+  const before = parentRenders.mock.calls.length;
+  for (let i = 0; i < 8; i++) {
+    t += 250;
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
+  }
+  expect(screen.getByTestId('exam-timer-readout').props.children).toBe('0:28');
+  expect(parentRenders.mock.calls.length).toBe(before);
+});

@@ -78,6 +78,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run check:i18n
+      - run: npm run check:a11y
       # Pure logic on Node's own runner against real SQLite (node:sqlite).
       - run: npm run test:node
       # Component rendering under jest-expo + RNTL.

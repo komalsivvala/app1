@@ -22,7 +22,7 @@
     "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
     "test:node": "node --import tsx --test \"src/**/*.test.ts\"",
     "test:jest": "jest --ci",
-    "test": "npm run validate:config && npm run validate:content && npm run check:i18n && npm run test:scripts && npm run test:node && npm run test:jest",
+    "test": "npm run validate:config && npm run validate:content && npm run check:i18n && npm run check:a11y && npm run test:scripts && npm run test:node && npm run test:jest",
     "check": "npm run typecheck && npm run lint && npm test",
     "content:draw": "python3 pipeline/03_draw_signs.py",
     "content:ingest": "python3 pipeline/02_ingest_csv.py pipeline/raw/supplied/LLR_Andhra_Pradesh.csv --out pipeline/build/records.json",
@@ -32,7 +32,8 @@
     "typecheck:content": "npx --yes -p typescript@5 tsc --noEmit --strict --noUncheckedIndexedAccess --target es2022 --module esnext --skipLibCheck src/content/questions.ts",
     "export:web": "expo export --platform web",
     "screenshots": "node scripts/screenshot.mjs",
-    "e2e:web": "node scripts/e2e-web.mjs"
+    "e2e:web": "node scripts/e2e-web.mjs",
+    "check:a11y": "node scripts/check-a11y.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
