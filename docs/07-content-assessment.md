@@ -151,7 +151,7 @@ asymmetry outweighs the better evidence for now. It is a one-line change:
 
 `G-CONFIG` enforces that both fields move together, and this is now item 3 on the RTO checklist.
 
-## 6. The sign-image problem is not solved, only relocated
+## 6. ~~The sign-image problem is not solved, only relocated~~ Resolved at M4 — all 68 signs redrawn as SVG, stems restored, IDs preserved
 
 **67 of 83 Traffic Signs questions (81%) describe the sign in words** instead of showing it:
 
@@ -187,7 +187,7 @@ product gap, which is why it is written down here.
 | Conflict-register items carry AP's answer | ✅ 4/4 |
 | Factual spot-check | ✅ see below |
 | Explanations present | ✅ 277/277 (English) |
-| State-name leakage into a question stem | ⚠️ 1 row (`Q163`) — reword |
+| State-name leakage into a question stem | ✅ reworded via `pipeline/text-fixes.json`; gate `G-FRAMING` |
 
 **Factual spot-check.** Speed limits, ages and validity periods were checked against the statutes:
 25 km/h passing a procession and near road workers (RRR 1989 **Reg 27**), 24 km/h towing a disabled
@@ -232,4 +232,4 @@ insertion at position 1 shifts nothing, and cosmetic reformatting mints nothing.
 3. **Confirm: use `LLR_Andhra_Pradesh.csv`, not the master (§4).**
 4. **Accept the store-listing wording change (§3)** — "Telangana's published bank, which AP
    publishes in the same three parts", not "the official AP bank", until the AP PDFs are checked.
-5. **Sign SVGs (§6)** — schedule ~67 redraws, or accept a mock exam that is 40% word-descriptions.
+5. ~~**Sign SVGs (§6)** — schedule ~67 redraws, or accept a mock exam that is 40% word-descriptions.~~ **Done at M4:** 68 signs drawn (`docs/screenshots/signs-*.png`), every sign question shows its artwork with the official stem.

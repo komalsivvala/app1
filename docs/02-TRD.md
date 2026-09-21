@@ -138,6 +138,11 @@ Python 3.11+, committed and re-runnable. `pdfplumber` for tables, `PyMuPDF` for 
 
 Anything failing → `needs_review.json`, **excluded from the emitted bundle**, never shipped blank. Golden-file snapshots prevent a silent content change on re-run.
 
+> **[M4 notes]**
+> - **All 68 sign images are redrawn**, not extracted: the bank reached us as text. `pipeline/signs.json` is the hand-authored registry (id, category, name, meaning, the CSV rows that describe each sign); `03_draw_signs.py` composes every SVG from a small primitive library so the set shares one stroke weight and palette. `G-SIGNS` gates the registry and `G-ASSET` now checks both directions for real.
+> - **The official stem is restored.** The 68 described-in-words rows become *"What does this sign mean?"* with artwork, and the prose becomes `signAlt` — the image's accessibility text. Because that makes left-curve and right-curve textually identical, **`signId` is part of the content hash**; the rewrite itself is carried across by `previousContentHash` at emit, so no ID changed (0 minted, 68 carried).
+> - **`pipeline/text-fixes.json`** holds the two edits that remove compilation framing ("under the Telangana bank…") from text a candidate reads; a new gate `G-FRAMING` blocks any such stem. Never used for answer keys.
+
 **Known hazards, handled explicitly:**
 
 - Telugu PDFs often use non-Unicode/custom-mapped fonts. `G-TELUGU` catches this; OCR is the fallback; a human reviews the queue. **Resolve this before writing any UI.**

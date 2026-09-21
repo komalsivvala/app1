@@ -71,7 +71,7 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 
 **Day 3 — signs and merge**
 - [ ] `03_extract_signs.py` — PyMuPDF image extraction keyed to question number
-- [ ] Redraw as SVG anything that extracts poorly, against the standard Indian sign set
+- [x] Redraw as SVG anything that extracts poorly, against the standard Indian sign set *(all 68 — nothing could be extracted; `pipeline/03_draw_signs.py` composes them from frames + pictogram primitives; contact sheets in `docs/screenshots/signs-*.png`)*
 - [ ] `04_merge.py` — join Telugu ↔ English on `(topic, officialQNo)`
 - [ ] Assign stable IDs (`rs-###`, `rrr-###`, `gdp-###`) from a **content hash**, never from `officialQNo` — see `05-Data-Schema.md` §2.2
 
@@ -121,14 +121,14 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 
 ## 6. M4 — Learn + Signs · Days 13–16
 
-- [ ] Topic cards → question list with mastered / unseen / wrong-last-time status
-- [ ] Question detail: reveal answer, explanation, legal ref, bookmark
-- [ ] Flashcard swipe deck writing to `question_stats`
-- [ ] Bilingual search — NFC-normalised index built once at module scope, <150 ms
-- [ ] Signs grid (`FlashList`, memoised SVG cells), three categories
-- [ ] Sign detail: large SVG, both languages shown together, linked questions
+- [x] Topic cards → question list with mastered / unseen / wrong-last-time status *(plus "seen" for flashcard-only history; sign questions show a thumbnail and their description — 68 identical stems would otherwise be indistinguishable)*
+- [x] Question detail: reveal answer, explanation, legal ref, bookmark *(try an option or just reveal; writes no stats — only exams and flashcards do)*
+- [x] Flashcard ~~swipe~~ deck writing to `question_stats` *(two large buttons rather than swipe-only, so it works with a screen reader; all-modes counters only — tested never to touch `exam_*` or `last_result`)*
+- [x] Bilingual search — NFC-normalised index built once ~~at module scope~~ **on first use** (TRD §8), <150 ms *(build asserted <150 ms on the real bank; a sign question is found by its description)*
+- [x] Signs grid (`FlashList`, memoised SVG cells), three categories *(one 3-column list, headers span the row; 68 signs drawn by `03_draw_signs.py`)*
+- [x] Sign detail: large SVG, ~~both languages shown together~~ *[A1]*, linked questions
 
-**Gate:** signs grid scrolls at 60 fps on the test device; search returns in <150 ms across the full bank.
+**Gate:** signs grid scrolls at 60 fps on the test device *(not measured — no device; tiles are memoised)*; search returns in <150 ms across the full bank *(asserted in `search-bundle.test.ts`)*.
 
 ## 7. M5 — Progress + Guide · Days 17–19
 
