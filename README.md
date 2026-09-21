@@ -64,7 +64,7 @@ The content pipeline needs Python:
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r pipeline/requirements.txt
 
-.venv/bin/python pipeline/test_pipeline.py          # 29 tests, incl. ID stability
+.venv/bin/python pipeline/test_pipeline.py          # 27 tests, incl. ID stability
 npm run content:ingest                              # CSV -> canonical records
 npm run content:validate                            # every gate, --strict
 npm run content:emit                                # -> src/content/questions.ts
