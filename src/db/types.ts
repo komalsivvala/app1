@@ -27,4 +27,6 @@ export interface Db {
   runAsync(sql: string, params: BindValue[]): Promise<RunResult>;
   getFirstAsync<T>(sql: string, params: BindValue[]): Promise<T | null>;
   getAllAsync<T>(sql: string, params: BindValue[]): Promise<T[]>;
+  /** Runs `task` inside BEGIN/COMMIT, rolling back if it throws. */
+  withTransactionAsync(task: () => Promise<void>): Promise<void>;
 }

@@ -34,6 +34,17 @@ export class NodeSqliteDb implements Db {
     return this.raw.prepare(sql).all(...bind(params)).map((row) => ({ ...row }) as T);
   }
 
+  async withTransactionAsync(task: () => Promise<void>): Promise<void> {
+    this.raw.exec('BEGIN');
+    try {
+      await task();
+      this.raw.exec('COMMIT');
+    } catch (e) {
+      this.raw.exec('ROLLBACK');
+      throw e;
+    }
+  }
+
   close(): void {
     this.raw.close();
   }
