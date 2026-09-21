@@ -48,6 +48,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--records", type=Path, default=ROOT / "pipeline" / "build" / "records.json")
     ap.add_argument("--strict", action="store_true", help="exit non-zero if any blocking gate fails")
+    ap.add_argument(
+        "--reports-dir", type=Path, default=REPORTS,
+        help="where validation.json / needs_review.json are written. Tests point this at a temp dir so a "
+             "scenario run never overwrites the real, committed reports.",
+    )
     args = ap.parse_args()
 
     records = json.loads(args.records.read_text(encoding="utf-8"))
@@ -221,7 +226,8 @@ def main() -> int:
         gates["G-IDSTABLE"].fail(None, "pipeline/id-map.json does not exist yet (first run - will be created at emit)")
 
     # ---- report ----------------------------------------------------------
-    REPORTS.mkdir(parents=True, exist_ok=True)
+    reports_dir = args.reports_dir
+    reports_dir.mkdir(parents=True, exist_ok=True)
     W = 74
     print("=" * W)
     print(f"CONTENT VALIDATION — {len(records)} records from {args.records.name}  |  languages: [{lang_list}]")
@@ -264,8 +270,8 @@ def main() -> int:
             for g in gates.values()
         },
     }
-    (REPORTS / "validation.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    (REPORTS / "needs_review.json").write_text(
+    (reports_dir / "validation.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    (reports_dir / "needs_review.json").write_text(
         json.dumps(
             {"quarantined": [{"id": k, "failedGates": v} for k, v in sorted(quarantined.items())]},
             indent=2,
@@ -273,7 +279,11 @@ def main() -> int:
         + "\n",
         encoding="utf-8",
     )
-    print(f"\nreports -> {REPORTS.relative_to(ROOT)}/validation.json, needs_review.json")
+    try:
+        shown = reports_dir.relative_to(ROOT)
+    except ValueError:
+        shown = reports_dir
+    print(f"\nreports -> {shown}/validation.json, needs_review.json")
 
     if blocking_failed:
         print(f"\n✗ {len(blocking_failed)} BLOCKING gate(s) failed: {', '.join(blocking_failed)}")

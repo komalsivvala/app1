@@ -162,9 +162,13 @@ def with_config(langs: list[str], fn):
         cfg_path.write_text(original, encoding="utf-8")
 
 def run_validate():
-    return subprocess.run([PY, str(PIPELINE / "05_validate.py"), "--records",
-                           str(PIPELINE / "build/records.json"), "--strict"],
-                          capture_output=True, text=True)
+    # --reports-dir into a temp dir: a scenario run must never overwrite the
+    # real pipeline/reports/, which is committed and describes the SHIPPED config.
+    with tempfile.TemporaryDirectory() as td:
+        return subprocess.run([PY, str(PIPELINE / "05_validate.py"), "--records",
+                               str(PIPELINE / "build/records.json"), "--strict",
+                               "--reports-dir", td],
+                              capture_output=True, text=True)
 
 def run_emit_dry():
     with tempfile.TemporaryDirectory() as td:

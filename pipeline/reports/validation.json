@@ -1,13 +1,13 @@
 {
   "records": 277,
-  "shippable": 0,
-  "quarantined": 277,
-  "byTopicShippable": {},
-  "blockingGatesFailed": [
-    "G-BILINGUAL",
-    "G-MERGE",
-    "G-MIX"
-  ],
+  "shippable": 277,
+  "quarantined": 0,
+  "byTopicShippable": {
+    "road-signs": 91,
+    "rules-of-road-regulations": 108,
+    "general-driving-principles": 78
+  },
+  "blockingGatesFailed": [],
   "gates": {
     "G-STRUCT": {
       "passed": true,
@@ -15,9 +15,9 @@
       "violations": 0
     },
     "G-BILINGUAL": {
-      "passed": false,
+      "passed": true,
       "blocking": true,
-      "violations": 277
+      "violations": 0
     },
     "G-TELUGU": {
       "passed": true,
@@ -40,14 +40,14 @@
       "violations": 0
     },
     "G-MERGE": {
-      "passed": false,
+      "passed": true,
       "blocking": true,
-      "violations": 1
+      "violations": 0
     },
     "G-MIX": {
-      "passed": false,
+      "passed": true,
       "blocking": true,
-      "violations": 3
+      "violations": 0
     },
     "G-IDSTABLE": {
       "passed": true,
@@ -55,9 +55,9 @@
       "violations": 0
     },
     "G-EXPLAIN": {
-      "passed": false,
+      "passed": true,
       "blocking": false,
-      "violations": 277
+      "violations": 0
     },
     "G-STEM": {
       "passed": false,
