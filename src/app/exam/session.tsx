@@ -165,7 +165,7 @@ export default function ExamSessionScreen() {
         <AppText color="danger">{t('review.missingQuestion')}</AppText>
       ) : (
         <>
-          <QuestionCard text={localized(question.text, language)} testID="exam-question" />
+          <QuestionCard text={localized(question.text, language)} signId={question.signId} signAlt={question.signAlt === null ? null : localized(question.signAlt, language)} testID="exam-question" />
           <View style={styles.options}>
             {question.options.map((opt, i) => (
               <OptionRow

@@ -65,6 +65,11 @@ function Navigation() {
           <Stack.Screen name="exam/session" options={{ gestureEnabled: false }} />
           <Stack.Screen name="exam/result" options={{ gestureEnabled: false }} />
           <Stack.Screen name="exam/review/[attemptId]" />
+          <Stack.Screen name="learn/[topic]" />
+          <Stack.Screen name="learn/flashcards" />
+          <Stack.Screen name="learn/search" />
+          <Stack.Screen name="question/[id]" />
+          <Stack.Screen name="signs/[signId]" />
           <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
           <Stack.Screen name="about" options={{ presentation: 'modal' }} />
           <Stack.Screen name="guide/index" options={{ presentation: 'modal' }} />

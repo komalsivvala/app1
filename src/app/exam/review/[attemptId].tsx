@@ -9,6 +9,7 @@ import { IconButton } from '@/components/IconButton';
 import { OptionRow, type OptionState } from '@/components/OptionRow';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Segmented } from '@/components/Segmented';
+import { SignArt } from '@/components/SignArt';
 import { localized, questionById } from '@/content';
 import { loadAttempt, type LoadedAttempt } from '@/db/attempts';
 import { useDb } from '@/db/provider';
@@ -84,6 +85,7 @@ export default function ReviewScreen() {
             <AppText color="secondary">{t('review.missingQuestion')}</AppText>
           ) : (
             <>
+              {q.signId !== null && <SignArt signId={q.signId} alt={q.signAlt === null ? '' : localized(q.signAlt, language)} size={140} />}
               <AppText variant="question">{localized(q.text, language)}</AppText>
               <View style={styles.options}>
                 {q.options.map((opt, i) => {
