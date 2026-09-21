@@ -1,0 +1,17 @@
+{
+  "$schema": "./content-config.schema.json",
+  "contentVersion": "2026.09.1",
+  "languages": [
+    "en"
+  ],
+  "defaultLanguage": "en",
+  "plannedLanguages": [
+    "te"
+  ],
+  "decision": {
+    "date": "2026-09-21",
+    "summary": "v1 ships English-only. Telugu is deferred to v1.1 (PRD amendment A1).",
+    "reason": "The only content available is the consolidated English bank. The AP Telugu PDFs exist but aptransport.org is unreachable from the build environment. Machine translation is forbidden by the PRD.",
+    "reversal": "Add \"te\" to languages, supply Telugu content, and every gate re-arms automatically."
+  }
+}

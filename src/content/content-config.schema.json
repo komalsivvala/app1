@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ContentConfig",
+  "description": "Which languages the content bundle carries. The pipeline gates (G-BILINGUAL, G-MERGE) and the app's language UI both read this. Adding a language here without content for it fails the build; that is the point.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contentVersion",
+    "languages",
+    "defaultLanguage",
+    "plannedLanguages",
+    "decision"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "contentVersion": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}\\.\\d+$",
+      "description": "YYYY.MM.N — bumped by hand on every content change. Pinned here, never derived from the clock, so a re-run is byte-reproducible."
+    },
+    "languages": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "en",
+          "te"
+        ]
+      },
+      "description": "Languages every shipped question MUST carry. Gate G-BILINGUAL checks each."
+    },
+    "defaultLanguage": {
+      "enum": [
+        "en",
+        "te"
+      ],
+      "description": "Must be one of `languages`."
+    },
+    "plannedLanguages": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "en",
+          "te"
+        ]
+      },
+      "description": "Languages the schema reserves a slot for but which are not yet shipped. Must not overlap `languages`."
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "summary",
+        "reason",
+        "reversal"
+      ],
+      "properties": {
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reversal": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "description": "Why the language set is what it is. A language cut is a product decision and must be recorded where the config lives, not only in a doc."
+    }
+  }
+}
