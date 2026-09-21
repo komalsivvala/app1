@@ -54,6 +54,16 @@
       "blocking": true,
       "violations": 0
     },
+    "G-SIGNS": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
+    "G-FRAMING": {
+      "passed": true,
+      "blocking": true,
+      "violations": 0
+    },
     "G-EXPLAIN": {
       "passed": true,
       "blocking": false,

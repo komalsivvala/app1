@@ -1,0 +1,12 @@
+{
+  "note": "Hand-authored edits to the ingested text, applied by 02_ingest_csv.py. Only for wording that leaks the compilation's own framing (state names, 'the bank') into a question a candidate will read. Never for answer keys. A stem change is carried across by previousContentHash so the question keeps its ID.",
+  "fixes": {
+    "Q163": {
+      "question": "The maximum speed at which a two-wheeler may be driven is",
+      "explanation": "Andhra Pradesh's speed schedule sets 50 km/h as the maximum for motorcycles. Limits differ between states, so check the local schedule."
+    },
+    "Q123": {
+      "explanation": "At a signal-controlled junction, wait for the green light before making the U-turn. Turning against the signal is an offence."
+    }
+  }
+}

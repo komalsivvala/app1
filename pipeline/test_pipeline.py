@@ -19,6 +19,15 @@ ROOT = PIPELINE.parent
 sys.path.insert(0, str(PIPELINE))
 from lib_content import CATEGORY_TO_TOPIC, TOPICS, content_hash, sentence_case, telugu_ratio  # noqa: E402
 
+
+def _parses(path: Path) -> bool:
+    import xml.etree.ElementTree as ET
+    try:
+        ET.parse(path)
+        return True
+    except ET.ParseError:
+        return False
+
 PY = str(ROOT / ".venv" / "bin" / "python")
 CSV = "/root/.claude/uploads/961cee9d-677c-536d-9952-494a361b72fa/6391bf70-LLR_Andhra_Pradesh.csv"
 
@@ -88,6 +97,11 @@ check("differs when the option SET differs (the Q180/181/182 bug)",
       h("rules-of-road-regulations", "In which of these places may you park your vehicle?", ["Near a road crossing", "Near a bend", "On a footpath", "None of these"])
       != h("rules-of-road-regulations", "In which of these places may you park your vehicle?", ["Near a traffic light", "Near a pedestrian crossing", "On a main road", "None of these"]))
 check("differs across topics", h("road-signs", "Q", OPTS) != h("general-driving-principles", "Q", OPTS))
+check("differs by SIGN with identical text and options (left curve vs right curve)",
+      content_hash("road-signs", "What does this sign mean?", OPTS, "cautionary-left-hand-curve")
+      != content_hash("road-signs", "What does this sign mean?", OPTS, "cautionary-right-hand-curve"))
+check("a non-sign question's hash is unchanged by the sign parameter (IDs stay stable)",
+      content_hash("road-signs", "Q", OPTS) == content_hash("road-signs", "Q", OPTS, None))
 
 print()
 print("=" * 70)
@@ -135,11 +149,60 @@ with tempfile.TemporaryDirectory() as td:
     for r in records:
         c = json.loads(json.dumps(r))
         c["text"]["en"] = "  " + c["text"]["en"].upper() + "  "
-        c["contentHash"] = content_hash(c["topic"], c["text"]["en"], [o["en"] for o in c["options"]])
+        c["contentHash"] = content_hash(c["topic"], c["text"]["en"], [o["en"] for o in c["options"]], c.get("signId"))
         reformatted.append(c)
     b4, _ = emit_to(tmp, reformatted, m1)
     check("whitespace/case reformatting keeps every ID",
           [q["id"] for q in b4["questions"]] == ids1)
+
+print()
+print("=" * 70)
+print("deliberate stem rewrite keeps the ID (previousContentHash)")
+print("=" * 70)
+with tempfile.TemporaryDirectory() as td:
+    tmp = Path(td)
+    original = [dict(r) for r in records[:3]]
+    for r in original:
+        r.pop("previousContentHash", None)
+    b_before, m_before = emit_to(tmp, original, None)
+    old_ids = [q["id"] for q in b_before["questions"]]
+    rewritten = []
+    for r in original:
+        c = json.loads(json.dumps(r))
+        c["previousContentHash"] = c["contentHash"]
+        c["text"]["en"] = "What does this sign mean?"
+        c["signId"] = f"test-sign-{c['sourceId']}"
+        c["contentHash"] = content_hash(c["topic"], c["text"]["en"], [o["en"] for o in c["options"]], c["signId"])
+        rewritten.append(c)
+    b_after, m_after = emit_to(tmp, rewritten, m_before)
+    check("rewritten questions keep their IDs", [q["id"] for q in b_after["questions"]] == old_ids)
+    check("the id-map key moved to the new hash (no orphan, no new mint)",
+          len(m_after["assigned"]) == len(m_before["assigned"]) and all(r["contentHash"] in m_after["assigned"] for r in rewritten))
+    # An ACCIDENTAL edit (no previous hash) must NOT be carried across.
+    accidental = json.loads(json.dumps(original[0]))
+    accidental["text"]["en"] = "An accidental edit"
+    accidental["contentHash"] = content_hash(accidental["topic"], accidental["text"]["en"], [o["en"] for o in accidental["options"]])
+    b_acc, _ = emit_to(tmp, [accidental], m_before)
+    check("an edit without a previous hash mints a NEW id (and G-IDSTABLE will flag the orphan)",
+          b_acc["questions"][0]["id"] not in old_ids)
+
+print()
+print("=" * 70)
+print("sign registry and artwork")
+print("=" * 70)
+registry = json.loads((PIPELINE / "signs.json").read_text(encoding="utf-8"))["signs"]
+svg_dir = ROOT / "src" / "content" / "signs"
+check("every registry sign has a drawn SVG", all((svg_dir / f"{s['id']}.svg").exists() for s in registry))
+check("every SVG is well-formed XML with a viewBox", all(
+    'viewBox="0 0 100 100"' in (svg_dir / f"{s['id']}.svg").read_text(encoding="utf-8") for s in registry))
+import xml.etree.ElementTree as ET  # noqa: E402
+bad = [s["id"] for s in registry if not _parses(svg_dir / f"{s['id']}.svg")]
+check("every SVG parses", not bad, ", ".join(bad[:5]))
+sign_records = [r for r in records if r.get("signId")]
+check("68 questions carry a signId after ingest", len(sign_records) == 68, str(len(sign_records)))
+check("every sign question uses the official stem", all(r["text"]["en"] == "What does this sign mean?" for r in sign_records))
+check("every sign question keeps its prose as signAlt", all((r.get("signAlt") or {}).get("en") for r in sign_records))
+check("every sign question carries a previousContentHash", all(r.get("previousContentHash") for r in sign_records))
 
 print()
 print("=" * 70)

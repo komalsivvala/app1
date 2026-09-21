@@ -114,7 +114,7 @@ def telugu_ratio(s: str) -> float:
     return sum(1 for c in letters if lo <= ord(c) <= hi) / len(letters)
 
 
-def content_hash(topic: str, english_text: str, options: "list[str] | None" = None) -> str:
+def content_hash(topic: str, english_text: str, options: "list[str] | None" = None, sign_id: "str | None" = None) -> str:
     """The key in pipeline/id-map.json.
 
     Deliberately NOT derived from the official question number: if the
@@ -127,6 +127,9 @@ def content_hash(topic: str, english_text: str, options: "list[str] | None" = No
     gave all three one ID, so bookmarking one bookmarked all three and their
     stats merged. Options are sorted, so a pure reordering keeps the ID.
 
+    A deliberate pipeline rewrite of the stem (restoring the official sign
+    wording) is carried across by previousContentHash at emit time.
+
     The cost is accepted knowingly: correcting a typo in an option mints a new
     ID and that question's stats reset. That is the safer failure. A colliding
     ID merges distinct questions' history permanently and silently; a new ID
@@ -136,6 +139,12 @@ def content_hash(topic: str, english_text: str, options: "list[str] | None" = No
     parts = [topic, norm_text(english_text)]
     if options is not None:
         parts.extend(sorted(norm_text(o) for o in options))
+    # The artwork is part of a sign question's identity: "What does this sign
+    # mean?" with the same four options is a DIFFERENT question for the left
+    # curve and the right curve. Omitted (None) for non-sign questions, so
+    # their hashes — and IDs — are unchanged.
+    if sign_id:
+        parts.append(f"sign:{sign_id}")
     return hashlib.sha256("\x00".join(parts).encode()).hexdigest()
 
 

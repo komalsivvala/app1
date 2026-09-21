@@ -27,6 +27,10 @@ from lib_content import TOPICS, norm_text, shipped_languages, telugu_ratio  # no
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = Path(__file__).resolve().parent / "reports"
 EXAM_CONFIG = ROOT / "src" / "content" / "exam-config.json"
+SIGN_REGISTRY = Path(__file__).resolve().parent / "signs.json"
+SIGN_ART_DIR = ROOT / "src" / "content" / "signs"
+SIGN_CATEGORIES = {"mandatory", "cautionary", "informatory"}
+MIN_SVG_BYTES = 200
 
 TELUGU_MIN_RATIO = 0.90
 
@@ -72,12 +76,17 @@ def main() -> int:
             Gate("G-MERGE", "cross-language parity; answer column agrees across languages (multi-language only)"),
             Gate("G-MIX", "each topic has enough shippable questions for its sectionMix slot"),
             Gate("G-IDSTABLE", "every previously-mapped ID is present or explicitly retired"),
+            Gate("G-SIGNS", "sign registry is well-formed and every sign has artwork and at least one question"),
+            Gate("G-FRAMING", "no question stem leaks the compilation's framing (state names, 'the bank')"),
             Gate("G-EXPLAIN", f"every question has an explanation in every shipped language [{lang_list}]", blocking=False),
             Gate("G-STEM", "questions sharing a stem but differing in options", blocking=False),
         ]
     }
 
     quarantined: dict[str, list[str]] = collections.defaultdict(list)
+
+    signs = json.loads(SIGN_REGISTRY.read_text(encoding="utf-8"))["signs"] if SIGN_REGISTRY.exists() else []
+    sign_ids = {s["id"] for s in signs}
 
     def quarantine(rid: str, gate_id: str) -> None:
         """Only a BLOCKING gate removes a record from the shippable set."""
@@ -128,10 +137,20 @@ def main() -> int:
                     gates["G-TELUGU"].fail(rid, f"{label}: only {ratio:.0%} Telugu letters - mojibake?")
                     quarantine(rid, "G-TELUGU")
 
-        # G-ASSET
-        if r.get("needsSignImage") and not r.get("signId"):
+        # G-ASSET — both directions. A sign question without artwork is
+        # unanswerable; a signId without a real file is a blank box.
+        sid = r.get("signId")
+        if r.get("needsSignImage") and not sid:
             gates["G-ASSET"].fail(rid, "text refers to a sign/figure but no signId is attached")
             quarantine(rid, "G-ASSET")
+        if sid:
+            svg = SIGN_ART_DIR / f"{sid}.svg"
+            if sid not in sign_ids:
+                gates["G-ASSET"].fail(rid, f"signId {sid!r} is not in pipeline/signs.json")
+                quarantine(rid, "G-ASSET")
+            elif not svg.exists() or svg.stat().st_size < MIN_SVG_BYTES:
+                gates["G-ASSET"].fail(rid, f"artwork {svg.name} is missing or trivial — run 03_draw_signs.py")
+                quarantine(rid, "G-ASSET")
 
         # G-DEDUP — an MCQ's identity is its stem AND its option set, not its
         # stem alone. Keying on text alone would quarantine every road-sign
@@ -172,7 +191,16 @@ def main() -> int:
                 else None
             )
             seen_dedup[key] = (rid, correct_opt)
-            shared_stem[stem].append(rid)
+            # Sign questions all carry the official stem by design; the
+            # artwork distinguishes them, so they are not "shared stems".
+            if not r.get("signId"):
+                shared_stem[stem].append(rid)
+
+        # G-FRAMING — a candidate must never read "under the Telangana bank…".
+        import re as _re
+        if _re.search(r"\b(Telangana|Andhra Pradesh|Delhi|Maharashtra)\b|\bthe bank\b|licence bank", r["text"]["en"]):
+            gates["G-FRAMING"].fail(rid, f"stem leaks framing: {r['text']['en'][:70]!r}")
+            quarantine(rid, "G-FRAMING")
 
         # G-EXPLAIN (advisory)
         for lang in langs:
@@ -214,11 +242,36 @@ def main() -> int:
         elif have < need * 3:
             gates["G-MIX"].fail(None, f"{topic}: only {have} shippable for a {need}-question slot (<3x; papers will repeat)")
 
+    # ---- G-SIGNS ---------------------------------------------------------
+    source_ids = {r["sourceId"] for r in records}
+    referenced = {r["signId"] for r in records if r.get("signId")}
+    seen_ids: set[str] = set()
+    for sign in signs:
+        sid = sign.get("id", "")
+        if sid in seen_ids:
+            gates["G-SIGNS"].fail(sid, "duplicate sign id")
+        seen_ids.add(sid)
+        if sign.get("category") not in SIGN_CATEGORIES:
+            gates["G-SIGNS"].fail(sid, f"category {sign.get('category')!r} is not mandatory/cautionary/informatory")
+        for field in ("name", "meaning"):
+            if not (sign.get(field) or "").strip():
+                gates["G-SIGNS"].fail(sid, f"empty {field}")
+        svg = SIGN_ART_DIR / f"{sid}.svg"
+        if not svg.exists() or svg.stat().st_size < MIN_SVG_BYTES:
+            gates["G-SIGNS"].fail(sid, "no artwork file")
+        for src in sign.get("sourceIds", []):
+            if src not in source_ids:
+                gates["G-SIGNS"].fail(sid, f"sourceId {src} is not in the ingested records — stale mapping")
+        if sid not in referenced:
+            gates["G-SIGNS"].fail(sid, "no question references this sign")
+
     # ---- G-IDSTABLE ------------------------------------------------------
     id_map_path = Path(__file__).resolve().parent / "id-map.json"
     if id_map_path.exists():
         id_map = json.loads(id_map_path.read_text(encoding="utf-8"))
-        current = {r["contentHash"] for r in records}
+        # A hash that is about to be carried across a deliberate rewrite
+        # (previousContentHash) is not "vanished" — emit moves it in place.
+        current = {r["contentHash"] for r in records} | {r["previousContentHash"] for r in records if r.get("previousContentHash")}
         for h, assigned in id_map.get("assigned", {}).items():
             if h not in current and assigned not in id_map.get("retired", []):
                 gates["G-IDSTABLE"].fail(assigned, "previously-mapped ID vanished and was not retired")
@@ -258,6 +311,8 @@ def main() -> int:
         print(f"  {topic:<30} {have:>4} of {tot:>4} ingested   (slot {need}) {flag}")
     print(f"  {'TOTAL':<30} {len(shippable):>4} of {len(records):>4} ingested")
     print(f"  quarantined: {len(quarantined)}")
+    with_art = sum(1 for r in shippable if r.get("signId"))
+    print(f"  sign questions with artwork: {with_art}   signs in registry: {len(signs)}")
 
     report = {
         "records": len(records),
