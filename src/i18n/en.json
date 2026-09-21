@@ -1,0 +1,129 @@
+{
+  "app": {
+    "name": "AP Learner's Licence",
+    "tagline": "Practice Test"
+  },
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "ok": "OK",
+    "close": "Close",
+    "next": "Next",
+    "start": "Start",
+    "openSettings": "Open settings",
+    "questions": "{{count}} questions"
+  },
+  "tabs": {
+    "home": "Home",
+    "learn": "Learn",
+    "signs": "Road Signs",
+    "progress": "Progress"
+  },
+  "topics": {
+    "road-signs": "Road Signs",
+    "rules-of-road-regulations": "Rules of the Road",
+    "general-driving-principles": "General Driving Principles"
+  },
+  "home": {
+    "readiness": {
+      "empty": "Take your first mock test to see where you stand.",
+      "summary": "The real test needs {{passMark}} of {{questionCount}}. You're averaging {{pct}}% across your last {{n}} tests.",
+      "fewer": "The real test needs {{passMark}} of {{questionCount}}. You've completed {{n}} of 5 tests so far."
+    },
+    "startMock": "Start Mock Test",
+    "resumeMock": "Resume your test",
+    "cards": {
+      "learn": { "title": "Learn", "subtitle": "The full question bank, by topic" },
+      "signs": { "title": "Road Signs", "subtitle": "Mandatory, cautionary, informatory" },
+      "weakAreas": { "title": "Weak Areas", "subtitle": "Practise what you got wrong" }
+    },
+    "guide": "Documents & the RTO process"
+  },
+  "preExam": {
+    "title": "Mock Test",
+    "rules": {
+      "questions": "{{count}} questions",
+      "passMark": "{{count}} correct to pass",
+      "perQuestion": "{{seconds}} seconds per question",
+      "wholePaper": "{{minutes}} minutes for the whole paper",
+      "noBack": "You cannot go back to a previous question.",
+      "canBack": "You can go back to a previous question.",
+      "noNegative": "Wrong answers don't lose marks.",
+      "negative": "Each wrong answer loses {{marks}} marks."
+    },
+    "formatVerified": "Format as of {{date}} — verify at your RTO.",
+    "formatUnverified": "This format hasn't been confirmed at an RTO yet — check locally.",
+    "start": "Start"
+  },
+  "exam": {
+    "placeholder": "The exam engine arrives with milestone M3.",
+    "progress": "{{current}} / {{total}}"
+  },
+  "learn": {
+    "title": "Learn",
+    "browse": "Browse by topic",
+    "placeholder": "Question lists, flashcards and search arrive with milestone M4."
+  },
+  "signs": {
+    "title": "Road Signs",
+    "placeholder": "The signs chart arrives with milestone M4."
+  },
+  "progress": {
+    "title": "Progress",
+    "noAttempts": "No tests yet. Your history and weak areas will appear here after your first mock test.",
+    "history": "Attempt history",
+    "byTopic": "Accuracy by topic",
+    "practiceWeak": "Practise weak areas",
+    "bookmarks": "Bookmarks"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": {
+      "label": "Appearance",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "textSize": {
+      "label": "Text size",
+      "hint": "Follows your phone's text size setting. Change it in your phone's Settings → Display."
+    },
+    "resetProgress": {
+      "label": "Reset progress",
+      "confirmTitle": "Reset all progress?",
+      "confirmBody": "This deletes every test result, statistic and bookmark on this phone. It cannot be undone.",
+      "confirm": "Delete everything"
+    },
+    "about": "About this app"
+  },
+  "about": {
+    "title": "About",
+    "version": "App version",
+    "contentVersion": "Question bank version",
+    "source": {
+      "label": "Source",
+      "attribution": "Questions are derived from the LLR question bank published publicly by the AP Transport Department.",
+      "link": "aptransport.org/html/llr-question-bank.html"
+    },
+    "privacy": {
+      "label": "Privacy",
+      "summary": "No data is collected, stored online or shared. Everything stays on this phone.",
+      "link": "Privacy policy"
+    },
+    "disclaimer": "This is an unofficial study aid. It is not affiliated with, endorsed by, or connected to the Transport Department, Government of Andhra Pradesh, the Ministry of Road Transport & Highways, Parivahan, or Sarathi. Questions are derived from the LLR question bank published publicly by the AP Transport Department. Always verify current rules, fees and test format on the official portal.",
+    "contact": "Report a wrong answer"
+  },
+  "language": {
+    "choose": "Choose your language",
+    "en": "English",
+    "te": "తెలుగు"
+  },
+  "a11y": {
+    "primaryAction": "Primary action",
+    "settingsButton": "Settings",
+    "themeOption": "Set appearance to {{option}}",
+    "externalLink": "Opens in your browser"
+  }
+}
