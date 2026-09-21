@@ -31,27 +31,24 @@ test('Telugu line height exceeds Latin for every role (stacked conjuncts)', () =
   for (const r of ROLES) assert.ok(LINE_HEIGHT[r].telugu > LINE_HEIGHT[r].latin, r);
 });
 
-test('lineHeightFor at 100%: body latin 17 -> 26, body telugu 17 -> 28', () => {
-  assert.equal(lineHeightFor('body', 'latin', 17, 1), 26);
-  assert.equal(lineHeightFor('body', 'telugu', 17, 1), 28);
+test('lineHeightFor: body latin 17 -> 26, body telugu 17 -> 28, question telugu 20 -> 33', () => {
+  assert.equal(lineHeightFor('body', 'latin', 17), 26);
+  assert.equal(lineHeightFor('body', 'telugu', 17), 28);
+  assert.equal(lineHeightFor('question', 'telugu', 20), 33);
 });
 
-test('lineHeightFor SCALES with the OS font scale — the bug this exists to prevent', () => {
-  // At 200% text size the glyphs double; the line box must double too.
-  assert.equal(lineHeightFor('body', 'latin', 17, 2), 51);
-  assert.equal(lineHeightFor('body', 'telugu', 17, 2), 56);
-  assert.equal(lineHeightFor('question', 'telugu', 20, 2), 66);
-  for (const r of ROLES) {
-    const one = lineHeightFor(r, 'telugu', TYPE_SCALE[r].size, 1);
-    const two = lineHeightFor(r, 'telugu', TYPE_SCALE[r].size, 2);
-    assert.ok(Math.abs(two - 2 * one) <= 1, `${r}: ${one} -> ${two}`);
+test('lineHeightFor is UNSCALED — React Native applies the OS text size to fontSize and lineHeight itself', () => {
+  // Multiplying here as well would double-scale the line box on a device.
+  for (const r of Object.keys(TYPE_SCALE) as (keyof typeof TYPE_SCALE)[]) {
+    const size = TYPE_SCALE[r].size;
+    assert.equal(lineHeightFor(r, 'latin', size), Math.round(size * LINE_HEIGHT[r].latin));
+    assert.ok(lineHeightFor(r, 'telugu', size) > lineHeightFor(r, 'latin', size), `${r}: telugu needs the taller line box`);
   }
 });
 
-test('lineHeightFor refuses a missing or zero font scale', () => {
-  assert.throws(() => lineHeightFor('body', 'latin', 17, 0), RangeError);
-  assert.throws(() => lineHeightFor('body', 'latin', 17, -1), RangeError);
-  assert.throws(() => lineHeightFor('body', 'latin', 17, Number.NaN), RangeError);
+test('lineHeightFor refuses a non-positive size', () => {
+  assert.throws(() => lineHeightFor('body', 'latin', 0), RangeError);
+  assert.throws(() => lineHeightFor('body', 'latin', Number.NaN), RangeError);
 });
 
 test('every weight in the scale has a font family per script', () => {

@@ -1,5 +1,4 @@
 import { fireEvent, screen } from '@testing-library/react-native';
-import { Dimensions } from 'react-native';
 
 import { PrimaryButton } from '@/components/Button';
 import { light } from '@/design/tokens';
@@ -23,9 +22,11 @@ test('disabled state is exposed to assistive tech and blocks presses', async () 
   expect(onPress).not.toHaveBeenCalled();
 });
 
-test('the label uses the on-accent colour, the SemiBold family, and a line height scaled by the device font scale', async () => {
+test('the label uses the on-accent colour, the SemiBold family, and the UNSCALED option line height', async () => {
   await renderWithProviders(<PrimaryButton label="Go" onPress={() => {}} />);
-  // option role: 17 × 1.45 (latin) × whatever font scale the test environment reports.
-  const expectedLineHeight = Math.round(17 * 1.45 * Dimensions.get('window').fontScale);
-  expect(screen.getByText('Go')).toHaveStyle({ color: light.accent.on, fontFamily: 'Inter_600SemiBold', lineHeight: expectedLineHeight });
+  // option role: 17 × 1.45 (latin) = 25. Never multiplied by the device font
+  // scale in JS: React Native scales fontSize and lineHeight itself
+  // (docs/03-UIUX-Design.md §2, M6 correction). The Jest environment reports
+  // a font scale of 2 — which is exactly why the old, scaled assertion read 49.
+  expect(screen.getByText('Go')).toHaveStyle({ color: light.accent.on, fontFamily: 'Inter_600SemiBold', lineHeight: 25 });
 });

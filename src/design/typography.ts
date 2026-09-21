@@ -3,12 +3,17 @@
  * single source of truth for these numbers; do not restate them elsewhere.
  *
  * This module is PURE (no react-native import) so the arithmetic can be unit
- * tested in plain Node. The one React Native fact it encodes is the reason it
- * exists: `fontSize` scales with the OS text-size setting but a NUMERIC
- * `lineHeight` does not. So every line height must be multiplied by the
- * device font scale, or at 200% text size the glyphs double while the line
- * box stays fixed — which is precisely the Telugu clipping the spec forbids.
- * text-style.ts injects `PixelRatio.getFontScale()`; tests inject numbers.
+ * tested in plain Node.
+ *
+ * Every value here is UNSCALED. React Native applies the OS text-size
+ * multiplier to `fontSize` AND to a numeric `lineHeight` itself when
+ * allowFontScaling is on (the default): Android's TextAttributeProps converts
+ * lineHeight with toPixelFromSP, iOS multiplies it by the font-size multiplier
+ * in RCTAttributedTextUtils. Multiplying in JS as well would double-scale the
+ * line box — at 200% text size the glyphs double and the lines quadruple.
+ * The web export has no OS text size at all, so use-web-text-scale supplies a
+ * stand-in multiplier there (used by the 200% screenshot matrix); on native
+ * that multiplier is always 1.
  */
 
 export type Role = 'display' | 'title' | 'heading' | 'question' | 'option' | 'body' | 'caption';
@@ -44,13 +49,12 @@ export const LINE_HEIGHT: Readonly<Record<Role, Readonly<Record<Script, number>>
 };
 
 /**
- * Line height in dp for a role/script at a given size and device font scale.
- * `fontScale` is REQUIRED, not defaulted: a caller that forgets it is the bug
- * this function exists to prevent, so the type system refuses it.
+ * Unscaled line height in dp for a role/script at a given size. Never multiply
+ * this by the device font scale on native — React Native does that itself.
  */
-export function lineHeightFor(role: Role, script: Script, size: number, fontScale: number): number {
-  if (!(fontScale > 0)) throw new RangeError(`fontScale must be > 0, got ${fontScale}`);
-  return Math.round(size * LINE_HEIGHT[role][script] * fontScale);
+export function lineHeightFor(role: Role, script: Script, size: number): number {
+  if (!(size > 0)) throw new RangeError(`size must be > 0, got ${size}`);
+  return Math.round(size * LINE_HEIGHT[role][script]);
 }
 
 /** Font family per script. Only Inter is bundled in v1 (PRD A1). */
