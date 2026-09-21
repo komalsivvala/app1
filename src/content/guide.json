@@ -1,0 +1,56 @@
+{
+  "$comment": "Documents & the RTO process. Every fee and rule carries lastVerified and is shown with a verify-on-the-portal note; values change and stale numbers are worse than none (PRD R10).",
+  "officialPortal": { "label": { "en": "Parivahan Sarathi (learner licence services)" }, "url": "https://sarathi.parivahan.gov.in/" },
+  "statePortal": { "label": { "en": "AP Transport Department" }, "url": "https://www.aptransport.org/" },
+  "sections": [
+    {
+      "id": "eligibility",
+      "title": { "en": "Who can apply" },
+      "items": [
+        { "id": "age-nongeared", "label": { "en": "Non-geared two-wheeler up to 50 cc" }, "value": { "en": "16 years, with a parent or guardian's consent" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "age-geared", "label": { "en": "Geared two-wheeler, car (LMV)" }, "value": { "en": "18 years" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "age-transport", "label": { "en": "Transport / commercial vehicles" }, "value": { "en": "20 years" }, "lastVerified": "2026-09-20", "verify": true }
+      ]
+    },
+    {
+      "id": "documents",
+      "title": { "en": "Documents to carry" },
+      "items": [
+        { "id": "doc-age", "label": { "en": "Proof of age" }, "value": { "en": "Birth certificate, 10th-class certificate, passport or PAN card" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "doc-address", "label": { "en": "Proof of address" }, "value": { "en": "Aadhaar, voter ID, passport or a recent utility bill" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "doc-photos", "label": { "en": "Photographs" }, "value": { "en": "Passport-size photographs (the online form also takes an uploaded photo and signature)" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "doc-form1", "label": { "en": "Form 1 — self-declaration of physical fitness" }, "value": { "en": "Filled by you; declares you are fit to drive" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "doc-form1a", "label": { "en": "Form 1A — medical certificate" }, "value": { "en": "Signed by a registered doctor. Needed for transport-vehicle licences and, commonly, applicants over 40" }, "lastVerified": "2026-09-20", "verify": true }
+      ]
+    },
+    {
+      "id": "fees",
+      "title": { "en": "Fees" },
+      "items": [
+        { "id": "fee-application", "label": { "en": "Learner licence application" }, "value": { "en": "₹150 per class of vehicle" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "fee-test", "label": { "en": "Learner licence test" }, "value": { "en": "₹50" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "fee-total", "label": { "en": "Typical total for one class" }, "value": { "en": "About ₹200, paid online when you apply" }, "lastVerified": "2026-09-20", "verify": true }
+      ]
+    },
+    {
+      "id": "validity",
+      "title": { "en": "After you pass" },
+      "items": [
+        { "id": "ll-validity", "label": { "en": "Learner licence validity" }, "value": { "en": "6 months from the date of issue" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "dl-wait", "label": { "en": "Permanent licence test" }, "value": { "en": "Not before 30 days from the learner licence date, and before it expires" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "retest", "label": { "en": "If you do not pass" }, "value": { "en": "You can take the test again after a short waiting period" }, "lastVerified": "2026-09-20", "verify": true }
+      ]
+    },
+    {
+      "id": "booking",
+      "title": { "en": "Booking your test" },
+      "items": [
+        { "id": "book-1", "label": { "en": "1. Apply online" }, "value": { "en": "On the Parivahan Sarathi portal choose Andhra Pradesh, then Apply for Learner Licence" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "book-2", "label": { "en": "2. Fill the form and upload" }, "value": { "en": "Enter your details, upload documents, photo and signature" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "book-3", "label": { "en": "3. Pay the fee" }, "value": { "en": "Pay online and keep the receipt" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "book-4", "label": { "en": "4. Book a slot" }, "value": { "en": "Choose an RTO date and time. Some states offer the test from home with Aadhaar authentication — check what AP currently offers" }, "lastVerified": "2026-09-20", "verify": true },
+        { "id": "book-5", "label": { "en": "5. On the day" }, "value": { "en": "Carry the originals of every document and the receipt. The test is on a computer, in the language you choose" }, "lastVerified": "2026-09-20", "verify": true }
+      ]
+    }
+  ]
+}
