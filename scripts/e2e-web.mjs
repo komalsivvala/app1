@@ -141,7 +141,7 @@ async function main() {
     await tid('search-input').fill('octagonal');
     await page.locator('[data-testid="search-count"]').waitFor({ state: 'visible', timeout: 5_000 });
     const count = await tid('search-count').textContent();
-    if (!/\d+ results/.test(count ?? '')) throw new Error(`expected results, got ${JSON.stringify(count)}`);
+    if (!/^\d+ results?$/.test(count?.trim() ?? '')) throw new Error(`expected a result count, got ${JSON.stringify(count)}`);
     await tid('search-result-0').click();
     await expectVisible('question-detail');
     await expectVisible('sign-mandatory-stop');
@@ -170,6 +170,55 @@ async function main() {
     await tid('signs-search').fill('hospital');
     await expectVisible('sign-tile-informatory-hospital');
     if (await tid('sign-tile-mandatory-stop').count()) throw new Error('sign search should hide non-matching tiles');
+
+    step('Progress: history row, per-topic bars, practice weak areas → immediate feedback → summary');
+    await page.goto(`${base}/progress`, { waitUntil: 'networkidle' });
+    await expectVisible('progress');
+    await expectVisible('progress-history');
+    await expectVisible('progress-topics');
+    if (!(await page.locator('[data-testid^="history-"]:visible').count())) throw new Error('no attempt history row');
+    await tid('practice-weak').click();
+    await expectVisible('practice-session');
+    const pp = (await page.locator('[data-testid="practice-progress"]:visible').textContent())?.trim();
+    if (!/^1 \/ \d+$/.test(pp ?? '')) throw new Error(`practice progress should read "1 / N", got ${JSON.stringify(pp)}`);
+    if (!(await tid('practice-next').isDisabled())) throw new Error('Next must be disabled before answering');
+    await tid('practice-option-0').click();
+    await expectVisible('practice-feedback');
+    if (await tid('practice-next').isDisabled()) throw new Error('Next must enable once the answer is revealed');
+    // The next question re-uses the same option elements, so wait for the
+    // counter to advance (same render as the re-enable) before answering.
+    for (let n = 2; n <= 30; n++) {
+      await tid('practice-next').click();
+      await page
+        .locator(`[data-testid="practice-summary"]:visible, [data-testid="practice-progress"]:visible:has-text("${n} /")`)
+        .first()
+        .waitFor({ state: 'visible', timeout: 15_000 });
+      if (await page.locator('[data-testid="practice-summary"]:visible').count()) break;
+      await tid('practice-option-0').click();
+      await expectVisible('practice-feedback');
+    }
+    await expectVisible('practice-summary');
+    const ps = (await page.locator('[data-testid="practice-score"]:visible').textContent())?.trim();
+    if (!/^\d+ of \d+ correct$/.test(ps ?? '')) throw new Error(`bad practice score ${JSON.stringify(ps)}`);
+    console.log(`    practice: ${ps}`);
+    await tid('practice-done').click();
+    await expectVisible('progress');
+
+    step('Bookmarks: the review bookmark is listed; "Revise these" opens a flashcard deck of it');
+    await tid('progress-bookmarks').click();
+    await expectVisible('bookmarks');
+    await expectVisible('bookmark-row-0');
+    await tid('bookmarks-revise').click();
+    await expectVisible('flashcards');
+    await expectVisible('flashcard');
+
+    step('Guide: dated, verify-on-portal sections expand');
+    await page.goto(`${base}/guide`, { waitUntil: 'networkidle' });
+    await expectVisible('guide');
+    await expectVisible('guide-eligibility');
+    await tid('guide-fees-toggle').click();
+    if (!(await page.getByText('₹150 per class of vehicle').count())) throw new Error('fees section did not expand');
+    if (!(await page.getByText(/Verified .*2026/).count())) throw new Error('fees must show a verified date');
 
     step('back on Home the readiness card now has data and Start Mock Test is back');
     await page.goto(`${base}/`, { waitUntil: 'networkidle' });

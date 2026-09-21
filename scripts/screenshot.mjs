@@ -32,6 +32,8 @@ const SCREENS = [
   ['question-detail', '/question/rs-004', 'question-detail'],
   ['flashcards', '/learn/flashcards', 'flashcard'],
   ['signs-detail', '/signs/cautionary-cattle', 'sign-detail-art'],
+  ['guide', '/guide', 'guide-eligibility'],
+  ['bookmarks-empty', '/bookmarks', 'bookmarks-empty'],
 ];
 
 /** Screens that need typing before the shot: [name, route, testID, input testID, text]. */
@@ -62,6 +64,24 @@ async function examFlow(page, base, shoot) {
   await tid('review-item-0').waitFor({ state: 'visible', timeout: 15_000 });
   await page.waitForTimeout(300);
   await shoot('exam-review');
+  await tid('review-bookmark-0').click();
+  await page.locator('[data-testid="review-bookmark-0"][aria-label="Remove bookmark"]').waitFor({ state: 'visible', timeout: 5_000 });
+
+  // With a completed mock: progress has history and bars; practice draws weak areas.
+  await page.goto(`${base}/progress`, { waitUntil: 'networkidle' });
+  await tid('progress-history').first().waitFor({ state: 'visible', timeout: 15_000 });
+  await page.waitForTimeout(200);
+  await shoot('progress-with-data');
+  await tid('practice-weak').click();
+  await page.locator('[data-testid="practice-option-0"]:visible').first().waitFor({ state: 'visible', timeout: 15_000 });
+  await tid('practice-option-1').click();
+  await page.locator('[data-testid="practice-feedback"]:visible').first().waitFor({ state: 'visible', timeout: 5_000 });
+  await page.waitForTimeout(200);
+  await shoot('practice-session');
+  await page.goto(`${base}/bookmarks`, { waitUntil: 'networkidle' });
+  await tid('bookmark-row-0').first().waitFor({ state: 'visible', timeout: 15_000 });
+  await page.waitForTimeout(200);
+  await shoot('bookmarks');
 }
 
 async function main() {
@@ -148,7 +168,7 @@ async function main() {
     console.error(`\n${failures.length} screenshot(s) failed`);
     process.exit(1);
   }
-  console.log(`\n${(SCREENS.length + TYPED.length + 3) * 2} screenshots -> ${OUT}`);
+  console.log(`\n${(SCREENS.length + TYPED.length + 6) * 2} screenshots -> ${OUT}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
