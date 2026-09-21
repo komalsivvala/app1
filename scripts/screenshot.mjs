@@ -97,15 +97,27 @@ async function main() {
   const browser = await chromium.launch(launch);
 
   const failures = [];
-  for (const colorScheme of ['light', 'dark']) {
-    const context = await browser.newContext({
+  // The matrix: every screen × {light, dark} at 100%, and every screen at
+  // 200% text size in light (layout, not colour, is what text scale changes).
+  // The web export has no OS text size; the app reads `aplld.textScale` from
+  // localStorage as a stand-in (src/design/use-web-text-scale.web.ts).
+  const PASSES = [
+    ['light', 1],
+    ['dark', 1],
+    ['light', 2],
+  ];
+  for (const [colorScheme, textScale] of PASSES) {
+    const suffix = textScale === 1 ? colorScheme : `${colorScheme}-${textScale * 100}`;
+    const contextOptions = {
       viewport: { width: 390, height: 844 },
       deviceScaleFactor: 2,
       isMobile: true,
       hasTouch: true,
       colorScheme,
       reducedMotion: 'reduce',
-    });
+    };
+    const context = await browser.newContext(contextOptions);
+    if (textScale !== 1) await context.addInitScript((v) => localStorage.setItem('aplld.textScale', String(v)), textScale);
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
@@ -113,24 +125,24 @@ async function main() {
 
     for (const [name, route, testId] of SCREENS) {
       errors.length = 0;
-      const file = join(OUT, `${name}-${colorScheme}.png`);
+      const file = join(OUT, `${name}-${suffix}.png`);
       try {
         await page.goto(`http://127.0.0.1:${PORT}${route}`, { waitUntil: 'networkidle', timeout: 30_000 });
         await page.waitForSelector(`[data-testid="${testId}"]`, { timeout: 15_000 });
         await page.evaluate(() => document.fonts.ready);
         await page.waitForTimeout(300);
         await page.screenshot({ path: file, fullPage: true });
-        console.log(`  ✓ ${name}-${colorScheme}.png${errors.length ? `   (${errors.length} console error(s))` : ''}`);
+        console.log(`  ✓ ${name}-${suffix}.png${errors.length ? `   (${errors.length} console error(s))` : ''}`);
         for (const e of errors) console.log(`      ${e.slice(0, 160)}`);
       } catch (e) {
-        failures.push(`${name}-${colorScheme}: ${e.message.split('\n')[0]}`);
+        failures.push(`${name}-${suffix}: ${e.message.split('\n')[0]}`);
         await page.screenshot({ path: file.replace('.png', '-FAILED.png'), fullPage: true }).catch(() => {});
-        console.log(`  ✗ ${name}-${colorScheme}: ${e.message.split('\n')[0]}`);
+        console.log(`  ✗ ${name}-${suffix}: ${e.message.split('\n')[0]}`);
         for (const err of errors) console.log(`      ${err.slice(0, 200)}`);
       }
     }
     for (const [name, route, testId, inputId, text] of TYPED) {
-      const file = join(OUT, `${name}-${colorScheme}.png`);
+      const file = join(OUT, `${name}-${suffix}.png`);
       try {
         await page.goto(`http://127.0.0.1:${PORT}${route}`, { waitUntil: 'networkidle', timeout: 30_000 });
         await page.getByTestId(inputId).fill(text);
@@ -138,26 +150,27 @@ async function main() {
         await page.evaluate(() => document.fonts.ready);
         await page.waitForTimeout(300);
         await page.screenshot({ path: file, fullPage: true });
-        console.log(`  ✓ ${name}-${colorScheme}.png`);
+        console.log(`  ✓ ${name}-${suffix}.png`);
       } catch (e) {
-        failures.push(`${name}-${colorScheme}: ${e.message.split('\n')[0]}`);
-        console.log(`  ✗ ${name}-${colorScheme}: ${e.message.split('\n')[0]}`);
+        failures.push(`${name}-${suffix}: ${e.message.split('\n')[0]}`);
+        console.log(`  ✗ ${name}-${suffix}: ${e.message.split('\n')[0]}`);
       }
     }
 
     // Stateful exam flow in a FRESH context (empty database).
-    const flowContext = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, colorScheme, reducedMotion: 'reduce' });
+    const flowContext = await browser.newContext(contextOptions);
+    if (textScale !== 1) await flowContext.addInitScript((v) => localStorage.setItem('aplld.textScale', String(v)), textScale);
     const flowPage = await flowContext.newPage();
     try {
       await examFlow(flowPage, base, async (name) => {
         await flowPage.evaluate(() => document.fonts.ready);
-        await flowPage.screenshot({ path: join(OUT, `${name}-${colorScheme}.png`), fullPage: true });
-        console.log(`  ✓ ${name}-${colorScheme}.png`);
+        await flowPage.screenshot({ path: join(OUT, `${name}-${suffix}.png`), fullPage: true });
+        console.log(`  ✓ ${name}-${suffix}.png`);
       });
     } catch (e) {
-      failures.push(`exam-flow-${colorScheme}: ${e.message.split('\n')[0]}`);
-      console.log(`  ✗ exam-flow-${colorScheme}: ${e.message.split('\n')[0]}`);
-      await flowPage.screenshot({ path: join(OUT, `exam-flow-${colorScheme}-FAILED.png`), fullPage: true }).catch(() => {});
+      failures.push(`exam-flow-${suffix}: ${e.message.split('\n')[0]}`);
+      console.log(`  ✗ exam-flow-${suffix}: ${e.message.split('\n')[0]}`);
+      await flowPage.screenshot({ path: join(OUT, `exam-flow-${suffix}-FAILED.png`), fullPage: true }).catch(() => {});
     }
     await flowContext.close();
     await context.close();
@@ -168,7 +181,7 @@ async function main() {
     console.error(`\n${failures.length} screenshot(s) failed`);
     process.exit(1);
   }
-  console.log(`\n${(SCREENS.length + TYPED.length + 6) * 2} screenshots -> ${OUT}`);
+  console.log(`\n${(SCREENS.length + TYPED.length + 6) * PASSES.length} screenshots -> ${OUT}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

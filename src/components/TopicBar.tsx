@@ -11,10 +11,12 @@ export function TopicBar({ label, valueLabel, fraction }: { label: string; value
   return (
     <View style={styles.block} accessibilityRole="progressbar" accessibilityLabel={`${label}: ${valueLabel}`} accessibilityValue={{ min: 0, max: 100, now: pct }}>
       <View style={styles.labels}>
-        <AppText variant="caption" color="secondary">
+        <AppText variant="caption" color="secondary" style={styles.label}>
           {label}
         </AppText>
-        <AppText variant="caption">{valueLabel}</AppText>
+        <AppText variant="caption" style={styles.value}>
+          {valueLabel}
+        </AppText>
       </View>
       <View style={[styles.track, { backgroundColor: palette.border }]}>
         <View style={[styles.fill, { width: `${pct}%`, backgroundColor: palette.accent.fill }]} />
@@ -25,7 +27,10 @@ export function TopicBar({ label, valueLabel, fraction }: { label: string; value
 
 const styles = StyleSheet.create({
   block: { gap: space.xs },
-  labels: { flexDirection: 'row', justifyContent: 'space-between', gap: space.md },
+  labels: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', gap: space.md },
+  // At large text the LABEL wraps; the figure never breaks across lines.
+  label: { flex: 1 },
+  value: { flexShrink: 0 },
   track: { height: 6, borderRadius: radius.full, overflow: 'hidden' },
   fill: { height: '100%', borderRadius: radius.full },
 });

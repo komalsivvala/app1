@@ -12,6 +12,7 @@ import { localized } from '@/content';
 import { SIGNS, type Sign } from '@/content/questions';
 import { normalise } from '@/engine/search';
 import { useTheme } from '@/design/theme';
+import { useTypography } from '@/design/use-typography';
 import { layout, space } from '@/design/tokens';
 import { useI18n } from '@/i18n/use-i18n';
 import { usePrefs } from '@/state/prefs';
@@ -20,7 +21,7 @@ type Category = Sign['category'];
 const CATEGORIES: readonly Category[] = ['mandatory', 'cautionary', 'informatory'];
 type Row = { kind: 'header'; category: Category } | { kind: 'sign'; sign: Sign };
 
-/** Three sections in one 3-column FlashList; headers span the row. Tiles are
+/** Three sections in one 3-column FlashList (2 at large text); headers span the row. Tiles are
  *  memoised so scrolling never re-renders an SVG. */
 export default function SignsScreen() {
   const { t } = useI18n();
@@ -28,6 +29,9 @@ export default function SignsScreen() {
   const { palette } = useTheme();
   const { language } = usePrefs();
   const [query, setQuery] = useState('');
+  // Layout decision only: three 100 dp tiles break captions mid-word at 200%.
+  const { fontScale } = useTypography();
+  const columns = fontScale >= 1.5 ? 2 : 3;
 
   const rows = useMemo<Row[]>(() => {
     const q = normalise(query);
@@ -73,11 +77,11 @@ export default function SignsScreen() {
     <SafeAreaView style={[styles.root, { backgroundColor: palette.bg }]} edges={['top', 'left', 'right']} testID="signs">
       <FlashList
         data={rows}
-        numColumns={3}
+        numColumns={columns}
         keyExtractor={(r) => (r.kind === 'header' ? `h-${r.category}` : r.sign.id)}
         getItemType={(r) => r.kind}
         overrideItemLayout={(layoutInfo, r) => {
-          if (r.kind === 'header') layoutInfo.span = 3;
+          if (r.kind === 'header') layoutInfo.span = columns;
         }}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
