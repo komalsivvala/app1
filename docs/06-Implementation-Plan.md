@@ -102,20 +102,20 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 
 ## 5. M3 — Mock exam · Days 8–12
 
-- [ ] `examEngine.ts` — pure, no React: sampling, scoring, timing
-- [ ] `selection.ts` — `sectionMix` + weak-area weighting, seeded RNG
-- [ ] Unit tests: scoring, pass threshold, timer expiry, no-repeat-within-paper, `sectionMix` exactness, deterministic seeding
-- [ ] Pre-exam screen reading rules from `exam-config.json`
-- [ ] Exam session screen — `OptionRow`, isolated `ExamTimer` leaf, progress pill
-- [ ] Forward-only: disable hardware back, swipe-back, header back; exit confirm dialog
-- [ ] Clock-change detection → `timing_reliable = 0`
-- [ ] Write the `attempts` row **and all N `attempt_answers` rows** at attempt creation — the paper is a DB fact, not a re-derivation from `seed`
-- [ ] Per-question `presented_at`; mode-specific background rules (`04-App-Flow.md` §3)
-- [ ] Update `question_stats`, writing `exam_seen`/`exam_correct` only from mock attempts
-- [ ] Result screen — verdict with icon, score, topic breakdown
-- [ ] Review screen — all questions, both answers marked, explanation block, bookmark
-- [ ] Resume-in-progress-attempt on relaunch
-- [ ] Maestro E2E: install → language → full mock → review, **in airplane mode**
+- [x] `examEngine.ts` — pure, no React: sampling, scoring, timing *(as `src/engine/{selection,scoring,timing,clock,session}.ts`; the session is a pure reducer that returns state + persistence effects)*
+- [x] `selection.ts` — `sectionMix` + weak-area weighting, seeded RNG *(mulberry32 over an FNV-1a hash of the seed)*
+- [x] Unit tests: scoring, pass threshold, timer expiry, no-repeat-within-paper, `sectionMix` exactness, deterministic seeding *(48 engine tests, plus a statistical test that never-seen questions are drawn ≈4× as often as mastered ones)*
+- [x] Pre-exam screen reading rules from `exam-config.json`
+- [x] Exam session screen — `OptionRow`, isolated `ExamTimer` leaf, progress pill
+- [x] Forward-only: disable hardware back, swipe-back, header back; exit confirm dialog *(`beforeRemove` intercepts every route out; Discard abandons the attempt)*
+- [x] Clock-change detection → `timing_reliable = 0` *(monotonic vs wall clock, 2 s tolerance, latches; time continues from the monotonic source)*
+- [x] Write the `attempts` row **and all N `attempt_answers` rows** at attempt creation — the paper is a DB fact, not a re-derivation from `seed` *(one transaction; a bad row rolls back the whole attempt — tested)*
+- [x] Per-question `presented_at`; mode-specific background rules (`04-App-Flow.md` §3) *(the real test keeps advancing while you are away: k = ⌊elapsed / perQuestion⌋ questions time out in order; whole-paper scores on return past the deadline)*
+- [x] Update `question_stats`, writing `exam_seen`/`exam_correct` only from mock attempts *(a practice attempt is tested to leave both at 0)*
+- [x] Result screen — verdict with icon, score, topic breakdown
+- [x] Review screen — all questions, both answers marked, explanation block, bookmark *(plus the "Not correct" filter chip)*
+- [x] Resume-in-progress-attempt on relaunch *(Home offers Resume / Discard; the session re-reads the paper and reconciles time away)*
+- [ ] Maestro E2E: install → language → full mock → review, **in airplane mode** — *not run: no device. The identical flow runs against the static web build with real SQLite (`npm run e2e:web`); airplane mode is moot there since the export makes no network calls.*
 
 **Gate:** a complete mock test works end-to-end in both languages, both themes, offline. This is the moment the app becomes real — screenshot everything.
 

@@ -146,6 +146,11 @@ Anything failing → `needs_review.json`, **excluded from the emitted bundle**, 
 
 ## 5. Exam engine
 
+> **[M3 notes]** Implemented as `src/engine/`. Two deliberate refinements of this section, both tested:
+> - **Session state is a pure reducer, not a Zustand store.** `reduce(state, action) → { state, effects }` returns the next state *and* the SQLite writes it implies; the screen persists the effects in order. Every transition — including backgrounding and clock jumps — is exercised without React or timers. Zustand (§2) is not installed until something needs cross-screen ephemeral state; nothing yet does.
+> - **Persistence is write-behind by a few milliseconds.** The screen advances optimistically (the <100 ms transition budget in §8) and the reducer's effects are written to SQLite in order immediately after. A process kill inside that window loses at most the last effect; on resume the paper re-reads from the database and that question is asked again with its clock re-anchored — never a corrupt or skipped question. The web E2E settles 500 ms before simulating a kill for exactly this reason.
+> - **A tapped-but-unsubmitted option counts as the answer when the per-question timer expires**, recorded correct/wrong rather than `timeout`. The real test's auto-advance takes whatever is selected, and losing a tapped answer to the clock is the wrong pressure to rehearse. Nothing tapped → `timeout`. Product decision, easy to reverse in `session.ts`.
+
 Pure TypeScript, no React, fully unit-testable.
 
 ```ts
