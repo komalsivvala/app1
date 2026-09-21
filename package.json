@@ -33,7 +33,9 @@
     "export:web": "expo export --platform web",
     "screenshots": "node scripts/screenshot.mjs",
     "e2e:web": "node scripts/e2e-web.mjs",
-    "check:a11y": "node scripts/check-a11y.mjs"
+    "check:a11y": "node scripts/check-a11y.mjs",
+    "brand:assets": "node scripts/brand-assets.mjs",
+    "store:screenshots": "node scripts/store-screenshots.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
