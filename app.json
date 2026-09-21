@@ -2,7 +2,7 @@
   "expo": {
     "name": "AP Learner's Licence — Practice Test",
     "slug": "ap-learners-licence-practice",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "aplld",
@@ -10,7 +10,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vensai.aplearnerslicence",
-      "infoPlist": { "ITSAppUsesNonExemptEncryption": false }
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.vensai.aplearnerslicence",
@@ -50,7 +52,9 @@
           "backgroundColor": "#FFFFFF",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 120,
-          "dark": { "backgroundColor": "#0B0B0D" }
+          "dark": {
+            "backgroundColor": "#0B0B0D"
+          }
         }
       ]
     ],
@@ -59,9 +63,13 @@
       "checkAutomatically": "ON_ERROR_RECOVERY",
       "fallbackToCacheTimeout": 0
     },
-    "runtimeVersion": { "policy": "appVersion" },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "description": "Unofficial, offline practice for the Andhra Pradesh learner's licence test: a mock exam in the real format, the full published question bank with explanations, and every road sign.",
+    "githubUrl": "https://github.com/komalsivvala/app1"
   }
 }
