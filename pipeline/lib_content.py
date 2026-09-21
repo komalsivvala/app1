@@ -10,8 +10,28 @@ how a source category maps onto the three official AP topics.
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import unicodedata
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parent.parent
+CONTENT_CONFIG_PATH = _ROOT / "src" / "content" / "content-config.json"
+
+
+def load_content_config() -> dict:
+    """src/content/content-config.json — which languages ship.
+
+    Read at call time, not import time, so a test can point at a scratch copy
+    and so the gates react to an edit without a process restart.
+    """
+    return json.loads(CONTENT_CONFIG_PATH.read_text(encoding="utf-8"))
+
+
+def shipped_languages() -> list[str]:
+    """The languages every shipped question must carry. Gate G-BILINGUAL checks each."""
+    return list(load_content_config()["languages"])
+
 
 # The three parts the AP/Telangana bank is published in. These are the topic
 # IDs used by exam-config.json's sectionMix and by the app.

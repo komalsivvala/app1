@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib_content import TOPICS, norm_text, telugu_ratio  # noqa: E402
+from lib_content import TOPICS, norm_text, shipped_languages, telugu_ratio  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = Path(__file__).resolve().parent / "reports"
@@ -48,40 +48,29 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--records", type=Path, default=ROOT / "pipeline" / "build" / "records.json")
     ap.add_argument("--strict", action="store_true", help="exit non-zero if any blocking gate fails")
-    ap.add_argument(
-        "--allow-english-only",
-        action="store_true",
-        help=(
-            "demote the Telugu-dependent gates to advisory. ONLY for assessing what an "
-            "English-only bank would yield; shipping that way needs a PRD amendment, "
-            "because bilingual is listed as never-cuttable."
-        ),
-    )
     args = ap.parse_args()
 
     records = json.loads(args.records.read_text(encoding="utf-8"))
     config = json.loads(EXAM_CONFIG.read_text(encoding="utf-8"))
+    langs = shipped_languages()
+    lang_list = ", ".join(langs)
 
     gates = {
         g.id: g
         for g in [
             Gate("G-STRUCT", "exactly 4 non-empty options; answerIndex in 0..3"),
-            Gate("G-BILINGUAL", "non-empty en AND te for question text and all 4 options"),
+            Gate("G-BILINGUAL", f"non-empty text and all 4 options in every shipped language [{lang_list}]"),
             Gate("G-TELUGU", f">={TELUGU_MIN_RATIO:.0%} of letters in each te string are Telugu (U+0C00-U+0C7F)"),
             Gate("G-ASSET", "sign-dependent questions carry a signId, and that artwork exists"),
             Gate("G-DEDUP", "no two questions share (stem, signId, option set); no contradictory keys"),
             Gate("G-KEY", "answer key present and resolvable to a 0-based index"),
-            Gate("G-MERGE", "per-topic te/en parity; answer column agrees across both languages"),
+            Gate("G-MERGE", "cross-language parity; answer column agrees across languages (multi-language only)"),
             Gate("G-MIX", "each topic has enough shippable questions for its sectionMix slot"),
             Gate("G-IDSTABLE", "every previously-mapped ID is present or explicitly retired"),
-            Gate("G-EXPLAIN", "every question has an explanation in both languages", blocking=False),
+            Gate("G-EXPLAIN", f"every question has an explanation in every shipped language [{lang_list}]", blocking=False),
             Gate("G-STEM", "questions sharing a stem but differing in options", blocking=False),
         ]
     }
-
-    if args.allow_english_only:
-        for gid in ("G-BILINGUAL", "G-MERGE"):
-            gates[gid].blocking = False
 
     quarantined: dict[str, list[str]] = collections.defaultdict(list)
 
@@ -110,16 +99,19 @@ def main() -> int:
             gates["G-KEY"].fail(rid, f"answer key {r.get('answerKeyRaw')!r} did not resolve")
             quarantine(rid, "G-KEY")
 
-        # G-BILINGUAL
-        missing_te = []
-        if not (r["text"].get("te") or "").strip() if r["text"].get("te") is not None else True:
-            missing_te.append("text")
-        for i, o in enumerate(opts):
-            if not (o.get("te") or "").strip() if o.get("te") is not None else True:
-                missing_te.append(f"option{i + 1}")
-        if missing_te:
-            gates["G-BILINGUAL"].fail(rid, f"no Telugu for: {', '.join(missing_te)}")
-            quarantine(rid, "G-BILINGUAL")
+        # G-BILINGUAL — every SHIPPED language, read from content-config.json.
+        # With languages=["en"] this checks English only; add "te" and it
+        # re-arms for Telugu with no code change.
+        for lang in langs:
+            missing = []
+            if not (r["text"].get(lang) or "").strip():
+                missing.append("text")
+            for i, o in enumerate(opts):
+                if not (o.get(lang) or "").strip():
+                    missing.append(f"option{i + 1}")
+            if missing:
+                gates["G-BILINGUAL"].fail(rid, f"no {lang} for: {', '.join(missing)}")
+                quarantine(rid, "G-BILINGUAL")
 
         # G-TELUGU (only meaningful where Telugu exists at all)
         for label, val in [("text", r["text"].get("te"))] + [
@@ -178,10 +170,9 @@ def main() -> int:
             shared_stem[stem].append(rid)
 
         # G-EXPLAIN (advisory)
-        if not (r["explanation"].get("en") or "").strip():
-            gates["G-EXPLAIN"].fail(rid, "no English explanation")
-        if not (r["explanation"].get("te") or "").strip():
-            gates["G-EXPLAIN"].fail(rid, "no Telugu explanation")
+        for lang in langs:
+            if not (r["explanation"].get(lang) or "").strip():
+                gates["G-EXPLAIN"].fail(rid, f"no {lang} explanation")
 
     # ---- G-STEM (advisory) ----------------------------------------------
     # Not an error: the official bank really does ask "in which of these
@@ -193,11 +184,15 @@ def main() -> int:
             gates["G-STEM"].fail(None, f"{len(ids)} questions share the stem {stem[:52]!r}: {', '.join(ids)}")
 
     # ---- G-MERGE ---------------------------------------------------------
-    with_te = sum(1 for r in records if (r["text"].get("te") or "").strip())
-    if with_te == 0:
-        gates["G-MERGE"].fail(None, f"0 of {len(records)} records carry Telugu - there is no join to verify")
-    elif with_te != len(records):
-        gates["G-MERGE"].fail(None, f"only {with_te} of {len(records)} records carry Telugu")
+    # The join between languages only exists when there is more than one.
+    # With a single shipped language there is nothing to merge and the gate
+    # passes vacuously; the moment "te" is added it checks parity again.
+    if len(langs) > 1:
+        primary = langs[0]
+        for lang in langs[1:]:
+            have = sum(1 for r in records if (r["text"].get(lang) or "").strip())
+            if have != len(records):
+                gates["G-MERGE"].fail(None, f"{have} of {len(records)} records carry {lang}; {primary} has all {len(records)}")
 
     # ---- G-MIX (must run AFTER quarantine, which removes questions) ------
     shippable = [r for r in records if r["sourceId"] not in quarantined]
@@ -229,7 +224,7 @@ def main() -> int:
     REPORTS.mkdir(parents=True, exist_ok=True)
     W = 74
     print("=" * W)
-    print(f"CONTENT VALIDATION — {len(records)} records from {args.records.name}")
+    print(f"CONTENT VALIDATION — {len(records)} records from {args.records.name}  |  languages: [{lang_list}]")
     print("=" * W)
 
     blocking_failed = []

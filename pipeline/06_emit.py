@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib_content import TOPIC_PREFIX, TOPICS  # noqa: E402
+from lib_content import TOPIC_PREFIX, TOPICS, load_content_config, shipped_languages  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 PIPELINE = Path(__file__).resolve().parent
@@ -49,24 +49,32 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--records", type=Path, default=PIPELINE / "build" / "records.json")
     ap.add_argument("--out", type=Path, default=PIPELINE / "build" / "questions.v1.json")
-    ap.add_argument("--content-version", default=datetime.now(timezone.utc).strftime("%Y.%m.1"))
-    ap.add_argument(
-        "--allow-english-only",
-        action="store_true",
-        help="emit with te omitted. Needs a PRD amendment; the bundle records languages:['en'] so the app cannot silently render blank Telugu.",
-    )
+    ap.add_argument("--content-version", default=None, help="override content-config.json contentVersion (tests only)")
     ap.add_argument("--dry-run", action="store_true", help="do not write id-map.json or the bundle")
+    ap.add_argument("--ts-out", type=Path, default=None, help="also emit a typed TS module here (src/content/questions.ts)")
     args = ap.parse_args()
 
     records = json.loads(args.records.read_text(encoding="utf-8"))
     id_map = load_id_map()
     assigned: dict[str, str] = dict(id_map.get("assigned", {}))
 
-    has_te = any((r["text"].get("te") or "").strip() for r in records)
-    if not has_te and not args.allow_english_only:
-        print("✗ no record carries Telugu, and --allow-english-only was not passed.", file=sys.stderr)
-        print("  Bilingual content is listed as never-cuttable in 01-PRD.md §6.", file=sys.stderr)
-        print("  Refusing to emit a bundle that silently drops a required language.", file=sys.stderr)
+    langs = shipped_languages()
+    content_version = args.content_version or load_content_config()["contentVersion"]
+
+    # The validator should already have quarantined these, but emit is the
+    # last line of defence: a bundle must never leave here with a shipped
+    # language missing from any record.
+    short = [
+        (r["sourceId"], lang)
+        for r in records
+        for lang in langs
+        if not (r["text"].get(lang) or "").strip()
+        or any(not (o.get(lang) or "").strip() for o in r["options"])
+    ]
+    if short:
+        print(f"✗ {len(short)} record/language pair(s) lack a SHIPPED language: {short[:5]}…", file=sys.stderr)
+        print("  content-config.json says every question must carry: " + ", ".join(langs), file=sys.stderr)
+        print("  Either supply the content or remove the language from the config (a PRD amendment).", file=sys.stderr)
         return 1
 
     # Highest existing serial per topic, so a new question never collides with
@@ -91,28 +99,26 @@ def main() -> int:
             assigned[h] = qid
             minted += 1
 
-        q = {
-            "id": qid,
-            "topic": r["topic"],
-            "signId": r.get("signId"),
-            "text": {"en": r["text"]["en"]},
-            "options": [{"en": o["en"]} for o in r["options"]],
-            "answerIndex": r["answerIndex"],
-            "explanation": {"en": r["explanation"]["en"]},
-            "legalRef": r.get("legalRef"),
-            "provenance": r["provenance"],
-        }
-        if has_te:
-            q["text"]["te"] = r["text"]["te"]
-            for i, o in enumerate(r["options"]):
-                q["options"][i]["te"] = o["te"]
-            q["explanation"]["te"] = r["explanation"]["te"]
-        questions.append(q)
+        # Localized fields carry exactly the shipped languages — no more, so
+        # a half-filled "te" can never leak into the bundle, and no less.
+        questions.append(
+            {
+                "id": qid,
+                "topic": r["topic"],
+                "signId": r.get("signId"),
+                "text": {lang: r["text"][lang] for lang in langs},
+                "options": [{lang: o[lang] for lang in langs} for o in r["options"]],
+                "answerIndex": r["answerIndex"],
+                "explanation": {lang: (r["explanation"].get(lang) or "") for lang in langs},
+                "legalRef": r.get("legalRef"),
+                "provenance": r["provenance"],
+            }
+        )
 
     bundle = {
         "schemaVersion": 1,
-        "contentVersion": args.content_version,
-        "languages": ["en", "te"] if has_te else ["en"],
+        "contentVersion": content_version,
+        "languages": langs,
         "sourceAttribution": "Question bank published by the Transport Department, Government of Andhra Pradesh",
         "sourceUrl": "https://www.aptransport.org/html/llr-question-bank.html",
         "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -135,10 +141,64 @@ def main() -> int:
     print(f"   languages : {bundle['languages']}")
     print(f"   IDs       : {minted} newly minted, {reused} reused from id-map.json")
     print(f"   id-map    : {len(assigned)} total mappings -> {rel(ID_MAP)}")
-    if not has_te:
-        print("\n   ⚠ ENGLISH-ONLY BUNDLE. languages:['en'] is recorded so the app can refuse")
-        print("     to offer a Telugu toggle it cannot honour. This needs a PRD amendment.")
+
+    # ---- src/content/questions.ts — what the app actually imports --------
+    if args.ts_out:
+        args.ts_out.parent.mkdir(parents=True, exist_ok=True)
+        args.ts_out.write_text(render_ts(bundle), encoding="utf-8")
+        print(f"   ts module : {rel(args.ts_out)}")
     return 0
+
+
+def render_ts(bundle: dict) -> str:
+    """Render the bundle as a typed TS module.
+
+    Types are generated from the shipped language set, so `Lang` is exactly
+    the union the content can honour. Adding "te" to content-config.json widens
+    the type; a component reading q.text.te before that is a compile error, not
+    a blank string.
+    """
+    langs = bundle["languages"]
+    lang_union = " | ".join(f"'{l}'" for l in langs)
+    topic_union = " | ".join(f"'{t}'" for t in TOPICS)
+    payload = json.dumps(bundle, indent=2, ensure_ascii=False)
+    return f"""// GENERATED by pipeline/06_emit.py — DO NOT EDIT BY HAND.
+// Source: {bundle['sourceUrl']}
+// Content version {bundle['contentVersion']}, generated {bundle['generatedAt']}.
+// Regenerate: npm run content:emit
+
+export type TopicId = {topic_union};
+export type Lang = {lang_union};
+export type Localized = Record<Lang, string>;
+
+export interface Question {{
+  id: string;
+  topic: TopicId;
+  signId: string | null;
+  text: Localized;
+  options: readonly [Localized, Localized, Localized, Localized];
+  answerIndex: 0 | 1 | 2 | 3;
+  explanation: Localized;
+  legalRef: string | null;
+  provenance: {{ source: string; status: string; confirmedIn: string; label: string }};
+}}
+
+export interface ContentBundle {{
+  schemaVersion: 1;
+  contentVersion: string;
+  languages: readonly Lang[];
+  sourceAttribution: string;
+  sourceUrl: string;
+  generatedAt: string;
+  questions: readonly Question[];
+  signs: readonly never[];
+}}
+
+export const CONTENT = {payload} as const satisfies ContentBundle;
+
+export const QUESTIONS: readonly Question[] = CONTENT.questions;
+export const LANGUAGES: readonly Lang[] = CONTENT.languages;
+"""
 
 
 if __name__ == "__main__":

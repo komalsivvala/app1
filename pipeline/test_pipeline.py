@@ -46,7 +46,7 @@ def emit_to(tmp: Path, records: list[dict], id_map: dict | None) -> tuple[dict, 
         else:
             live.write_text(json.dumps(id_map), encoding="utf-8")
         r = subprocess.run(
-            [PY, str(PIPELINE / "06_emit.py"), "--records", str(recs), "--out", str(out), "--allow-english-only"],
+            [PY, str(PIPELINE / "06_emit.py"), "--records", str(recs), "--out", str(out)],
             capture_output=True, text=True,
         )
         assert r.returncode == 0, r.stderr
@@ -143,15 +143,51 @@ with tempfile.TemporaryDirectory() as td:
 
 print()
 print("=" * 70)
-print("emit refuses to silently drop a language")
+print("language config drives the gates (content-config.json)")
 print("=" * 70)
-with tempfile.TemporaryDirectory() as td:
-    tmp = Path(td)
-    recs = tmp / "r.json"; recs.write_text(json.dumps(records), encoding="utf-8")
-    r = subprocess.run([PY, str(PIPELINE / "06_emit.py"), "--records", str(recs),
-                        "--out", str(tmp / "b.json"), "--dry-run"], capture_output=True, text=True)
-    check("emit without --allow-english-only exits non-zero", r.returncode != 0)
-    check("and says why", "never-cuttable" in r.stderr, r.stderr[:160])
+import lib_content  # noqa: E402
+
+def with_config(langs: list[str], fn):
+    """Run fn() with content-config.json temporarily set to `langs`."""
+    cfg_path = lib_content.CONTENT_CONFIG_PATH
+    original = cfg_path.read_text(encoding="utf-8")
+    cfg = json.loads(original)
+    cfg["languages"] = langs
+    cfg["defaultLanguage"] = langs[0]
+    cfg["plannedLanguages"] = [l for l in ("en", "te") if l not in langs]
+    try:
+        cfg_path.write_text(json.dumps(cfg), encoding="utf-8")
+        return fn()
+    finally:
+        cfg_path.write_text(original, encoding="utf-8")
+
+def run_validate():
+    return subprocess.run([PY, str(PIPELINE / "05_validate.py"), "--records",
+                           str(PIPELINE / "build/records.json"), "--strict"],
+                          capture_output=True, text=True)
+
+def run_emit_dry():
+    with tempfile.TemporaryDirectory() as td:
+        recs = Path(td) / "r.json"; recs.write_text(json.dumps(records), encoding="utf-8")
+        return subprocess.run([PY, str(PIPELINE / "06_emit.py"), "--records", str(recs),
+                               "--out", str(Path(td) / "b.json"), "--dry-run"],
+                              capture_output=True, text=True)
+
+r = with_config(["en"], run_validate)
+check("languages=[en]: every blocking gate passes (--strict exit 0)", r.returncode == 0,
+      r.stdout[-400:])
+check("languages=[en]: all 277 shippable", "277 of  277 ingested" in r.stdout)
+
+r = with_config(["en", "te"], run_validate)
+check("languages=[en,te]: G-BILINGUAL re-arms and fails", "[FAIL] G-BILINGUAL" in r.stdout)
+check("languages=[en,te]: reports the missing language by name", "no te for" in r.stdout)
+check("languages=[en,te]: --strict exits non-zero", r.returncode != 0)
+
+r = with_config(["en"], run_emit_dry)
+check("languages=[en]: emit succeeds", r.returncode == 0, r.stderr[:200])
+r = with_config(["en", "te"], run_emit_dry)
+check("languages=[en,te]: emit refuses (last line of defence)", r.returncode != 0)
+check("and names the config as the fix", "content-config.json" in r.stderr, r.stderr[:200])
 
 print()
 print("=" * 70)
