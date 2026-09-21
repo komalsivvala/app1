@@ -92,3 +92,29 @@ export function samplePaper(
   // Topics are mixed through the paper, as in the real test.
   return rng.shuffle(picked);
 }
+
+/** Practice draws from what needs work. Unlike exam sampling, a question the
+ *  learner got WRONG outranks one never seen: they came here to fix mistakes.
+ *  Mastered questions (accuracy ≥ 60%, last result not wrong) are excluded. */
+export type PracticeWeight = 0 | 2 | 3 | 4;
+
+export const PRACTICE_SIZE = 10;
+export const PRACTICE_MIN_POOL = 3;
+
+export function practiceWeight(stats: CandidateStats | undefined): PracticeWeight {
+  if (stats === undefined || stats.examSeen === 0) return 2;
+  if (stats.lastResult === 'wrong') return 4;
+  if (stats.examCorrect / stats.examSeen < 0.6) return 3;
+  return 0;
+}
+
+export function samplePractice(
+  candidates: readonly Candidate[],
+  stats: ReadonlyMap<string, CandidateStats>,
+  rng: Rng,
+  size: number = PRACTICE_SIZE,
+): Candidate[] {
+  const pool = candidates.filter((c) => practiceWeight(stats.get(c.id)) > 0);
+  if (pool.length < PRACTICE_MIN_POOL) return [];
+  return weightedSampleWithoutReplacement(pool, (c) => practiceWeight(stats.get(c.id)), Math.min(size, pool.length), rng);
+}
