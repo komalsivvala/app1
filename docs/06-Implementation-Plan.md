@@ -159,16 +159,16 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 
 ## 9. M7 — Store submission · Days 24–28
 
-**Day 24 — compliance.** This is where apps in this category die.
-- [ ] Play **Government apps declaration** submitted — the answer is *"not developed by or on behalf of a government entity"*. Write that down in `docs/store-submission.md` so the answer is deliberate, not improvised in the console.
-- [ ] Non-affiliation statement in the store listing description itself, not only in-app
-- [ ] `aptransport.org` source link in both listings
-- [ ] Icon audit: no emblem, seal, lion, tricolour, or anything official-looking
-- [ ] Privacy policy live on GitHub Pages; linked in-app and in both listings
-- [ ] Play Data Safety + Apple App Privacy both filled as "no data collected"
-- [ ] Content rating questionnaire
+**Day 24 — compliance.** This is where apps in this category die. *[M7: every answer is written down in `docs/store-submission.md` §1; filing them in the consoles is yours — the consoles are unreachable from the build environment.]*
+- [ ] Play **Government apps declaration** submitted — the answer is *"not developed by or on behalf of a government entity"*. ~~Write that down in `docs/store-submission.md` so the answer is deliberate, not improvised in the console.~~ *Written (§1.1). Filing: ☐*
+- [x] Non-affiliation statement in the store listing description itself, not only in-app *(first paragraph of the listing copy, §3)*
+- [x] `aptransport.org` source link in both listings *(§3, "SOURCE")*
+- [x] Icon audit: no emblem, seal, lion, tricolour, or anything official-looking *(a red L on white — the learner plate; `assets/brand/`, §1.7)*
+- [ ] Privacy policy live on GitHub Pages; linked in-app and in both listings *(page written — `docs/privacy-policy.md` — and linked from About and the listing copy; **live only once you enable Pages** — blocker B2; support email placeholder — B3)*
+- [ ] Play Data Safety + Apple App Privacy both filled as "no data collected" *(answers and the `expo-updates` reasoning recorded in §1.2–1.3; the EAS Update decision — blocker B4 — decides whether the qualification is even needed)*
+- [ ] Content rating questionnaire *(answers in §1.4: all "No" → Everyone / PEGI 3 / 4+)*
 
-**Day 25 — assets.** Adaptive Android icon, iOS icon set, splash, store screenshots at every required size, listing copy in English and Telugu.
+**Day 25 — assets.** Adaptive Android icon, iOS icon set, splash, store screenshots at every required size, listing copy in English ~~and Telugu~~ *[A1: a Telugu listing would promise a Telugu app; v1.1]*. *[M7: icon, adaptive layers, splash and favicon rendered from SVG by `npm run brand:assets`; store screenshots for Android phone, iPhone 6.7" and iPad 12.9" by `npm run store:screenshots` from the web export (recapture on a device if a reviewer objects); listing copy in §3. Not produced: the optional Play feature graphic.]*
 
 **Day 25–26 — RTO verification.** Go and confirm the real exam format: question count, pass mark, timing model, and whether the test lets you go back. Update `exam-config.json` and set `formatVerifiedOn` — until you do, it ships `null` and the app honestly says the format is unconfirmed. Nothing else in this plan substitutes for seeing the actual test.
 

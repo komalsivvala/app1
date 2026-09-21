@@ -28,6 +28,7 @@ No accounts. No ads. No tracking. No network required — ever.
 | M4 — Learn + Road Signs | ✅ 68 signs redrawn as SVG; topic lists, detail, flashcards, search, signs chart; web E2E |
 | M5 — Progress + Guide | ✅ progress tab, weak-area practice, bookmarks, dated documents-and-process guide; web E2E. **Guide values unverified against the live portal** (egress blocked) |
 | M6 — Explanations + polish | ✅ 277 explanations audited (1 fix, 2 new gates); a11y gate `G-A11Y`; line-height double-scaling bug fixed; 200% screenshot matrix; JS bundle 3.70 MB, assets 10.8 → 2.3 MB. **Device checks (200% text, cold start, AAB size) still owed** |
+| M7 — Store submission | ✅ prepared: icon and splash from SVG, store screenshots at three device sizes, privacy-policy site for GitHub Pages, `eas.json`, and `docs/store-submission.md` with every compliance answer and the listing copy. **Filing is yours** — seven blockers listed at the top of that document (RTO verification, Pages, support email, EAS Update decision, guide values, user test, accounts) |
 
 **`src/content/questions.ts` is real, typed, and ready to import.** 277 questions, 91 / 108 / 78
 by topic, every answer key valid, IDs stable across re-runs. It typechecks under `strict` +
@@ -204,6 +205,10 @@ src/app/                     expo-router routes (SDK 57 puts them under src/)
   bookmarks.tsx guide/index.tsx   M5
   settings.tsx about.tsx language.tsx
 src/components/              AppText, Buttons, Card, Segmented, ScreenHeader, ReadinessCard, PreExamRules…
+assets/brand/                icon SVGs (a red L on white); npm run brand:assets renders assets/images/*.png
+store/screenshots/           store screenshots at device sizes; npm run store:screenshots (from the web export)
+docs/index.md, privacy-policy.md, _config.yml   the GitHub Pages site (privacy policy + support page)
+eas.json                     EAS build/submit profiles: development · preview (APK) · production (AAB)
 src/design/                  tokens.ts (exact hex, both themes) · typography.ts (unscaled; RN scales) · contrast.ts · theme.tsx
                              use-web-text-scale.web.ts — the web stand-in for OS text size (200% screenshots)
 src/db/                      schema.ts (DDL verbatim) · migrations.ts · queries.ts · provider.tsx
@@ -248,6 +253,10 @@ src/content/
 - `useColorScheme()` can return `'unspecified'`; treat anything that is not `'dark'` as light.
 
 ## Before you build for the stores
+
+**Start with [`docs/store-submission.md`](docs/store-submission.md)** — blockers, compliance answers, listing copy, and the EAS runbook.
+
+### Notes from earlier milestones
 
 Two things gate the timeline and neither is code — start both on day 0:
 
