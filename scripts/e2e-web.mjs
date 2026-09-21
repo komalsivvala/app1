@@ -28,8 +28,10 @@ async function main() {
   page.on('pageerror', (e) => errors.push(e.message));
 
   const tid = (id) => page.getByTestId(id);
+  // Stack screens beneath the current one stay mounted (hidden) on web, so a
+  // testID can match a hidden element first; wait for a VISIBLE match instead.
   const expectVisible = async (id, timeout = 15_000) => {
-    await tid(id).first().waitFor({ state: 'visible', timeout });
+    await page.locator(`[data-testid="${id}"]:visible`).first().waitFor({ state: 'visible', timeout });
   };
 
   try {
@@ -114,6 +116,60 @@ async function main() {
     await tid('review-bookmark-0').click();
     await page.locator('[data-testid="review-bookmark-0"][aria-label="Remove bookmark"]').waitFor({ state: 'visible', timeout: 5_000 });
     console.log('    bookmark: on → off → on, each persisted');
+
+    step('Learn → topic list with status icons → question detail: try an option, see the explanation, bookmark, next');
+    await page.goto(`${base}/learn`, { waitUntil: 'networkidle' });
+    await expectVisible('learn');
+    await page.getByRole('button', { name: /^Road Signs\./ }).first().click();
+    await expectVisible('learn-topic');
+    await expectVisible('question-row-0');
+    await tid('question-row-0').click();
+    await expectVisible('question-detail');
+    const firstDetailUrl = page.url();
+    await tid('question-option-0').click();
+    await expectVisible('question-explanation');
+    await tid('question-bookmark').click();
+    await page.locator('[data-testid="question-bookmark"][aria-label="Remove bookmark"]').waitFor({ state: 'visible', timeout: 5_000 });
+    await tid('question-next').click();
+    await page.waitForFunction((prev) => window.location.href !== prev, firstDetailUrl, { timeout: 10_000 });
+    await expectVisible('question-detail');
+    if (await tid('question-explanation').count()) throw new Error('next question must start un-revealed');
+
+    step('search: "octagonal" finds the STOP sign question through its description');
+    await page.goto(`${base}/learn/search`, { waitUntil: 'networkidle' });
+    await expectVisible('learn-search');
+    await tid('search-input').fill('octagonal');
+    await page.locator('[data-testid="search-count"]').waitFor({ state: 'visible', timeout: 5_000 });
+    const count = await tid('search-count').textContent();
+    if (!/\d+ results/.test(count ?? '')) throw new Error(`expected results, got ${JSON.stringify(count)}`);
+    await tid('search-result-0').click();
+    await expectVisible('question-detail');
+    await expectVisible('sign-mandatory-stop');
+
+    step('flashcards: reveal, self-assess, deck advances');
+    await page.goto(`${base}/learn/flashcards?topic=road-signs`, { waitUntil: 'networkidle' });
+    await expectVisible('flashcards');
+    const fp1 = (await tid('flashcards-progress').textContent())?.trim();
+    if (fp1 !== '1 / 91') throw new Error(`flashcards should start at 1 / 91, got ${JSON.stringify(fp1)}`);
+    await tid('flashcard-reveal').click();
+    await expectVisible('flashcard-answer');
+    await tid('flashcard-knew').click();
+    await page.locator('[data-testid="flashcards-progress"]').filter({ hasText: '2 / 91' }).waitFor({ state: 'visible', timeout: 5_000 });
+
+    step('Road Signs: grid → STOP tile → detail with artwork → linked question; search filters the grid');
+    await page.goto(`${base}/signs`, { waitUntil: 'networkidle' });
+    await expectVisible('signs');
+    await expectVisible('sign-tile-mandatory-stop');
+    await tid('sign-tile-mandatory-stop').click();
+    await expectVisible('sign-detail');
+    await expectVisible('sign-detail-art');
+    await tid('sign-question-0').click();
+    await expectVisible('question-detail');
+    await expectVisible('sign-mandatory-stop');
+    await page.goto(`${base}/signs`, { waitUntil: 'networkidle' });
+    await tid('signs-search').fill('hospital');
+    await expectVisible('sign-tile-informatory-hospital');
+    if (await tid('sign-tile-mandatory-stop').count()) throw new Error('sign search should hide non-matching tiles');
 
     step('back on Home the readiness card now has data and Start Mock Test is back');
     await page.goto(`${base}/`, { waitUntil: 'networkidle' });

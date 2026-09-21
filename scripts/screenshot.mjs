@@ -28,6 +28,15 @@ const SCREENS = [
   ['exam-intro', '/exam/intro', 'exam-intro'],
   ['settings', '/settings', 'settings'],
   ['about', '/about', 'about'],
+  ['learn-topic', '/learn/road-signs', 'question-row-0'],
+  ['question-detail', '/question/rs-004', 'question-detail'],
+  ['flashcards', '/learn/flashcards', 'flashcard'],
+  ['signs-detail', '/signs/cautionary-cattle', 'sign-detail-art'],
+];
+
+/** Screens that need typing before the shot: [name, route, testID, input testID, text]. */
+const TYPED = [
+  ['search', '/learn/search', 'search-result-0', 'search-input', 'speed'],
 ];
 
 /** Stateful flows: drive the exam and capture session, result and review. */
@@ -100,6 +109,22 @@ async function main() {
         for (const err of errors) console.log(`      ${err.slice(0, 200)}`);
       }
     }
+    for (const [name, route, testId, inputId, text] of TYPED) {
+      const file = join(OUT, `${name}-${colorScheme}.png`);
+      try {
+        await page.goto(`http://127.0.0.1:${PORT}${route}`, { waitUntil: 'networkidle', timeout: 30_000 });
+        await page.getByTestId(inputId).fill(text);
+        await page.waitForSelector(`[data-testid="${testId}"]`, { timeout: 15_000 });
+        await page.evaluate(() => document.fonts.ready);
+        await page.waitForTimeout(300);
+        await page.screenshot({ path: file, fullPage: true });
+        console.log(`  ✓ ${name}-${colorScheme}.png`);
+      } catch (e) {
+        failures.push(`${name}-${colorScheme}: ${e.message.split('\n')[0]}`);
+        console.log(`  ✗ ${name}-${colorScheme}: ${e.message.split('\n')[0]}`);
+      }
+    }
+
     // Stateful exam flow in a FRESH context (empty database).
     const flowContext = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, colorScheme, reducedMotion: 'reduce' });
     const flowPage = await flowContext.newPage();
@@ -123,7 +148,7 @@ async function main() {
     console.error(`\n${failures.length} screenshot(s) failed`);
     process.exit(1);
   }
-  console.log(`\n${(SCREENS.length + 3) * 2} screenshots -> ${OUT}`);
+  console.log(`\n${(SCREENS.length + TYPED.length + 3) * 2} screenshots -> ${OUT}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

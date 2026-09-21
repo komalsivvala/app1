@@ -49,6 +49,7 @@ jobs:
 
       - name: Content gates
         run: |
+          .venv/bin/python pipeline/03_draw_signs.py
           .venv/bin/python pipeline/02_ingest_csv.py \
             pipeline/raw/supplied/LLR_Andhra_Pradesh.csv \
             --out pipeline/build/records.json
@@ -62,7 +63,7 @@ jobs:
           .venv/bin/python pipeline/06_emit.py --ts-out src/content/questions.ts
           # A generated file that drifts from its generator is a silent content
           # change. Only the generatedAt timestamp is allowed to differ.
-          git diff --ignore-matching-lines='generatedAt\|generated 20' --exit-code src/content/questions.ts pipeline/id-map.json
+          git diff --ignore-matching-lines='generatedAt\|generated 20' --exit-code src/content/questions.ts src/content/signs/ pipeline/id-map.json
 
   app:
     name: App — typecheck, lint, i18n, unit, component
