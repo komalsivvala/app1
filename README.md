@@ -26,6 +26,7 @@ No accounts. No ads. No tracking. No network required — ever.
 | M2 — app foundation | ✅ code complete; **verified on web only** — device gate pending |
 | M3 — mock exam end-to-end | ✅ engine, persistence, session/result/review; **web E2E**; device E2E pending |
 | M4 — Learn + Road Signs | ✅ 68 signs redrawn as SVG; topic lists, detail, flashcards, search, signs chart; web E2E |
+| M5 — Progress + Guide | ✅ progress tab, weak-area practice, bookmarks, dated documents-and-process guide; web E2E. **Guide values unverified against the live portal** (egress blocked) |
 
 **`src/content/questions.ts` is real, typed, and ready to import.** 277 questions, 91 / 108 / 78
 by topic, every answer key valid, IDs stable across re-runs. It typechecks under `strict` +
@@ -98,7 +99,7 @@ The content pipeline needs Python:
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r pipeline/requirements.txt
 
-.venv/bin/python pipeline/test_pipeline.py          # 27 tests, incl. ID stability
+.venv/bin/python pipeline/test_pipeline.py          # 39 tests, incl. ID stability
 npm run content:ingest                              # CSV -> canonical records
 npm run content:validate                            # every gate, --strict
 npm run content:emit                                # -> src/content/questions.ts
@@ -106,7 +107,7 @@ npm run typecheck:content                           # tsc --strict on the genera
 ```
 
 `npm test` runs every gate and every suite: G-CONFIG, G-LANG, G-I18N, the 38 zero-dependency
-gate tests, 65 node tests (design math + DB against real SQLite via `node:sqlite`), and the
+gate tests, 136 node tests (engine, design math, guide content, DB against real SQLite via `node:sqlite`), and the
 Jest component tests.
 
 ```
@@ -198,7 +199,9 @@ src/app/                     expo-router routes (SDK 57 puts them under src/)
   (tabs)/                    Home · Learn · Road Signs · Progress
   exam/intro.tsx             rules read live from exam-config.json
   exam/session.tsx           M3
-  settings.tsx about.tsx guide/index.tsx language.tsx
+  practice/session.tsx       M5 — the exam reducer, untimed, immediate feedback
+  bookmarks.tsx guide/index.tsx   M5
+  settings.tsx about.tsx language.tsx
 src/components/              AppText, Buttons, Card, Segmented, ScreenHeader, ReadinessCard, PreExamRules…
 src/design/                  tokens.ts (exact hex, both themes) · typography.ts · contrast.ts · theme.tsx
 src/db/                      schema.ts (DDL verbatim) · migrations.ts · queries.ts · provider.tsx
@@ -213,6 +216,7 @@ src/engine/                  the exam engine — pure, no React:
 src/db/attempts.ts           the paper as a DB fact: create/load/resume/finalise, question_stats
 src/test/                    Jest setup + renderWithProviders
 src/content/
+  guide.json                 documents, fees, process — every item dated (lastVerified), gated by a test
   exam-config.json           the single source of exam-format truth
   exam-config.schema.json    its JSON Schema
   content-config.json        which languages ship (v1: en). Gates and app both read it

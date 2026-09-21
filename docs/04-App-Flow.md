@@ -166,6 +166,8 @@ graph LR
 
 Practice mode differs from the mock exam deliberately: **untimed, immediate feedback, explanation after every question**. The mock exam simulates; practice teaches. Do not merge them.
 
+> **[M5 notes]** Implemented as `src/app/practice/session.tsx` + `summary.tsx` over the same reducer as the mock, under `PRACTICE_CONFIG` (no per-question limit, so no deadline and no timer). The pool is `samplePractice()` in `src/engine/selection.ts`: wrong-last-time (4) › accuracy below 60% (3) › never seen (2); mastered questions are excluded; fewer than 3 candidates is the empty state, and no completed mock at all is a distinct "take a mock test first" state. Ten questions per set. Leaving mid-set abandons it silently — `latestInProgressAttempt()` filters to `mode = 'mock'`, so a practice set is never offered for resume.
+
 A practice session **does** create an `attempts` row with `mode = 'practice'` and its own `attempt_answers` rows — that is what the Session summary reads. It sets no `pass_mark` or `passed`, and it never touches `exam_seen` / `exam_correct`, so practice cannot inflate your readiness score. Every per-topic accuracy figure on the Progress screen filters to `mode = 'mock' AND status = 'completed'` for exactly this reason.
 
 ## 6. Language switch *[A1: dormant in v1 — built, not rendered, while one language ships]*

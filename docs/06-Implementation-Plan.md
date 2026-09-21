@@ -132,12 +132,13 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 
 ## 7. M5 — Progress + Guide · Days 17–19
 
-- [ ] Progress tab: readiness card, attempt history, per-topic accuracy bars
-- [ ] Weak-area practice session — **untimed, immediate feedback, explanation after each**
-- [ ] Bookmarks screen; dangling-ID filtering
-- [ ] Guide content in `guide.json` with a `lastVerified` date on every fee and rule
-- [ ] Settings: language, theme, reset progress with confirm
-- [ ] About: version, content version, source attribution + `aptransport.org` link, privacy policy link, non-affiliation banner
+- [x] Progress tab: readiness card, attempt history, per-topic accuracy bars *(every figure from completed **mock** attempts only; a history row opens that attempt's review)*
+- [x] Weak-area practice session — **untimed, immediate feedback, explanation after each** *(the exam reducer under an untimed config, `mode = 'practice'`; draws 10 from wrong-last-time › accuracy < 60% › never-seen; never touches `exam_*`; leaving abandons quietly, never offered for resume)*
+- [x] Bookmarks screen; dangling-ID filtering *(newest first; "Revise these" runs the flashcard deck over the bookmarks)*
+- [x] Guide content in `guide.json` with a `lastVerified` date on every fee and rule *(a node test refuses a missing, malformed or future date, or any item not flagged verify-on-portal; links only to `sarathi.parivahan.gov.in` and `aptransport.org`)*
+- [x] Settings: language, theme, reset progress with confirm *(M2)*
+- [x] About: version, content version, source attribution + `aptransport.org` link, privacy policy link, non-affiliation banner *(M2)*
+- [ ] **Guide values checked against the live portal** — *not possible from the build environment (all `gov.in` / `aptransport.org` egress is blocked). Every value is dated 2026-09-20 from the research in `docs/00-phase0-exam-format.md` and shown with a verify-on-the-portal note. Visweswar: confirm the fees and age limits on Sarathi before store submission, then update `lastVerified`.*
 
 ## 8. M6 — Explanations + polish · Days 20–23
 
