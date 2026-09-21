@@ -2,6 +2,8 @@
 
 **Status:** Draft v2 · **Date:** 21 Sep 2026 · **Companion to:** `01-PRD.md`
 
+> **[A1 — English-only v1, 21 Sep 2026]** Telugu is deferred to v1.1 by PRD Amendment A1. Edits below are marked `[A1]`; the Telugu specification is retained verbatim for v1.1, not deleted.
+
 ---
 
 ## 1. Architecture at a glance
@@ -44,8 +46,8 @@ A **zero-backend, content-bundled mobile app**. Everything ships inside the bina
 | Content | **TS module `import`** | Questions compile into the JS bundle → fully OTA-updatable, no async load, no parse step. |
 | Signs | **react-native-svg** + `react-native-svg-transformer` | Import `.svg` directly; crisp at any size; themeable; kilobytes not megabytes. |
 | State | **Zustand** | Exam session state is ephemeral and local. No React Query — there is no server to cache. Nothing more is warranted. |
-| i18n | **i18n-js** + **expo-localization** | Detect device locale, allow manual override, persist. |
-| Fonts | **expo-font** | Bundle Noto Sans Telugu + Inter. |
+| i18n | **i18n-js** + **expo-localization** | Detect device locale, allow manual override, persist. *[A1: one locale in v1; `content-config.json` decides, the toggle is dormant]* |
+| Fonts | **expo-font** | Bundle ~~Noto Sans Telugu +~~ Inter. *[A1: Noto Sans Telugu not bundled in v1 (~0.4 MB saved); re-add with the Telugu content]* |
 | Lists | **@shopify/flash-list** | Sign grid and question lists; keeps 60fps on low-end Android. |
 | Bundle analysis | **expo-atlas** | Enforces the JS-bundle budget in CI. |
 | Testing | **Jest** + **React Native Testing Library** + **Maestro** (E2E) | |
@@ -123,12 +125,12 @@ Python 3.11+, committed and re-runnable. `pdfplumber` for tables, `PyMuPDF` for 
 | Gate | Rule |
 |---|---|
 | `G-STRUCT` | Exactly 4 non-empty options; `answerIndex` ∈ 0..3 |
-| `G-BILINGUAL` | Non-empty `en` and `te` for question text and all 4 options |
-| `G-TELUGU` | ≥90% of characters in each `te` string fall in U+0C00–U+0C7F |
+| `G-BILINGUAL` | Non-empty text and all 4 options in **every language listed in `src/content/content-config.json`** (v1: `en`). Adding `te` to the config re-arms the Telugu check with no code change. *[A1]* |
+| `G-TELUGU` | ≥90% of characters in each `te` string fall in U+0C00–U+0C7F *[A1: vacuous until `te` ships]* |
 | `G-ASSET` | Both directions. If `signId` is set, the artwork exists in `SIGN_ART` and is non-trivial. **And** any question whose text matches a sign-reference pattern (`/this sign|the sign (shown|below)/i`) must have a non-null `signId` — otherwise a question asking "what does this sign mean?" ships with no sign and is unanswerable. |
 | `G-DEDUP` | No two questions share the same `(normalised English text, signId)` pair. **Text alone is wrong** — all ~94 road-sign questions read "WHAT DOES THIS SIGN MEAN?" and a text-only key would quarantine the entire topic. |
 | `G-KEY` | Answer index matches the source PDF's 1-based answer column, off-by-one checked |
-| `G-MERGE` | **The gate that protects the one unforgivable bug.** Per-topic question-count parity between the Telugu and English PDFs, plus the answer column extracted *independently from both* — any mismatch quarantines the pair. Without this, a systematic off-by-one in the join would attach the wrong Telugu text to an English question and pass every other gate silently. Backed by a mandatory human spot-check of 15 random pairs at the M1 gate. |
+| `G-MERGE` | *[A1: vacuous with one language; re-arms with `te`]* **The gate that protects the one unforgivable bug.** Per-topic question-count parity between the Telugu and English PDFs, plus the answer column extracted *independently from both* — any mismatch quarantines the pair. Without this, a systematic off-by-one in the join would attach the wrong Telugu text to an English question and pass every other gate silently. Backed by a mandatory human spot-check of 15 random pairs at the M1 gate. |
 | `G-MIX` | For every topic, shippable question count ≥ `sectionMix[topic]`, and ideally ≥ 3×, or papers repeat. Also asserts `sum(sectionMix) === questionCount`. Quarantine removes questions, so this must run *after* it. |
 | `G-IDSTABLE` | Every ID in `pipeline/id-map.json` is either present in this run or explicitly retired. Protects user stats and bookmarks across re-runs — see `05-Data-Schema.md` §2.2. |
 
@@ -182,12 +184,12 @@ Never trust accumulated ticks — always recompute from persisted wall-clock tim
 
 ## 6. Internationalisation
 
-- Two locales: `en`, `te`. Device locale detected via `expo-localization`; manual override persisted in kv-store and read **synchronously at boot** so there is no flash of the wrong language.
+- ~~Two locales: `en`, `te`.~~ **One locale in v1: `en`** *[A1]*. `src/content/content-config.json` is the source of truth for which locales exist; the first-launch language sheet and the toggle render only when it lists more than one. Device locale detected via `expo-localization`; manual override persisted in kv-store and read **synchronously at boot** so there is no flash of the wrong language.
 - **Every user-visible string** lives in `en.json` / `te.json`. A CI check fails the build if the two files have different key sets or if any string is hardcoded in a component.
 - Content strings come from `questions.ts`, not the i18n files — different lifecycle, different source of truth.
 - Numbers and dates formatted with `Intl` using the active locale.
 
-## 7. Telugu rendering — treat as a first-class engineering problem
+## 7. Telugu rendering — treat as a first-class engineering problem *[A1: retained as the v1.1 spec; not exercised in v1]*
 
 | Concern | Requirement |
 |---|---|
@@ -220,7 +222,7 @@ Never trust accumulated ticks — always recompute from persisted wall-clock tim
 | **DB** (Jest + in-memory SQLite) | Migrations forward from every prior `user_version`; query correctness |
 | **Component** (RNTL) | Option selection, timer display, result computation, language switch |
 | **E2E** (Maestro) | Fresh install → choose language → complete a full mock → review answers → bookmark → find bookmark. Run in **airplane mode**. |
-| **Visual** | Screenshots of every screen × {en, te} × {light, dark} × {100%, 200% text scale} |
+| **Visual** | Screenshots of every screen × ~~{en, te}~~ {en} *[A1]* × {light, dark} × {100%, 200% text scale} |
 | **Accessibility** | Contrast assertions on the token set; label presence on every interactive element |
 
 ## 10. CI/CD

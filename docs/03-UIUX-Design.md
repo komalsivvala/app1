@@ -2,6 +2,8 @@
 
 **Status:** Draft v2 · **Date:** 21 Sep 2026
 
+> **[A1 — English-only v1, 21 Sep 2026]** Telugu is deferred to v1.1 by PRD Amendment A1. Edits below are marked `[A1]`; the Telugu specification is retained verbatim for v1.1, not deleted.
+
 ---
 
 ## 1. Design principles
@@ -61,7 +63,7 @@ So there is an explicit **`accent.on`** token: `#FFFFFF` in light, `#0B0B0D` in 
 
 ### Typography
 
-Two families: **Inter** (Latin/numerals), **Noto Sans Telugu** (Telugu). Both bundled — never system fonts.
+Two families: **Inter** (Latin/numerals), **Noto Sans Telugu** (Telugu). ~~Both bundled~~ *[A1: only Inter is bundled in v1. The Telugu column below is the v1.1 spec, and `lineHeightFor` keeps its `telugu` branch so enabling it is a data change, not a code change]* — never system fonts.
 
 | Role | Size | Weight | Latin LH | **Telugu LH** |
 |---|---|---|---|---|
@@ -119,7 +121,7 @@ Body text never below 17pt — this app is read under exam pressure by people wh
 | `TopicCard` | Title, question count, thin accuracy bar. |
 | `SignTile` | Square, SVG centred on `surface`, name below in active language. |
 | `StatRow` | Label left, value right, hairline below. |
-| `LanguageToggle` | Segmented `తెలుగు / English`. In the header on Home; in Settings; on the pre-exam screen. |
+| `LanguageToggle` | Segmented `తెలుగు / English`. In the header on Home; in Settings; on the pre-exam screen. *[A1: not rendered while `content-config.json` lists one language]* |
 | `EmptyState` | Line of text + one action. No illustrations. |
 | `Banner` | Used once — the non-affiliation disclaimer on About. |
 
@@ -127,7 +129,7 @@ Body text never below 17pt — this app is read under exam pressure by people wh
 
 ### Home — "start in two taps"
 
-Header: app name (left), language toggle + settings gear (right).
+Header: app name (left), ~~language toggle +~~ settings gear (right) *[A1: the toggle returns with a second language]*.
 
 Body, in order:
 
@@ -140,7 +142,7 @@ Body, in order:
 
 ### Pre-exam
 
-Language toggle. Then the real test's rules stated plainly, pulled live from `exam-config.json` so this screen can never contradict the engine:
+~~Language toggle.~~ *[A1]* The real test's rules stated plainly, pulled live from `exam-config.json` so this screen can never contradict the engine:
 
 > 20 questions · 12 correct to pass · 30 seconds per question
 > You cannot go back to a previous question.
@@ -208,7 +210,7 @@ Guide: accordion sections with a `Verified 21 Sep 2026` caption on every fee and
 |---|---|
 | Tap targets | ≥ 48 × 48 dp; option rows 56 |
 | Contrast | WCAG AA minimum. §2 verifies both foreground-on-`bg` **and** on-fill pairs; CI must assert both sets, not just the first |
-| Dynamic type | Support OS scaling to **200%** with no clipping, especially Telugu. Test at max scale on every screen. |
+| Dynamic type | Support OS scaling to **200%** with no clipping~~, especially Telugu~~ *[A1: any script]*. Test at max scale on every screen. |
 | Screen readers | Every interactive element labelled in the **active language**. Options announce as *"Option 2 of 4: Give way"*. Timer announces at 50% and 10% remaining only — not every second. |
 | Colour independence | Correct/incorrect always carry an icon and a text label, never colour alone |
 | Reduce motion | Honoured; transitions degrade to cross-fade |

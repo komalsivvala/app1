@@ -2,6 +2,8 @@
 
 **Status:** Draft v2 · **Date:** 21 Sep 2026
 
+> **[A1 — English-only v1, 21 Sep 2026]** Telugu is deferred to v1.1 by PRD Amendment A1. Edits below are marked `[A1]`; the Telugu specification is retained verbatim for v1.1, not deleted.
+
 ---
 
 ## 1. Navigation architecture
@@ -47,7 +49,7 @@ graph TD
 
 ## 2. First launch
 
-The entire path from install to answering a question is three taps and zero network calls.
+The entire path from install to answering a question is ~~three~~ **two** taps *[A1: the language sheet is skipped while `content-config.json` lists one language — steps C–D below do not render and the app opens on Home]* and zero network calls.
 
 ```mermaid
 graph LR
@@ -166,7 +168,7 @@ Practice mode differs from the mock exam deliberately: **untimed, immediate feed
 
 A practice session **does** create an `attempts` row with `mode = 'practice'` and its own `attempt_answers` rows — that is what the Session summary reads. It sets no `pass_mark` or `passed`, and it never touches `exam_seen` / `exam_correct`, so practice cannot inflate your readiness score. Every per-topic accuracy figure on the Progress screen filters to `mode = 'mock' AND status = 'completed'` for exactly this reason.
 
-## 6. Language switch
+## 6. Language switch *[A1: dormant in v1 — built, not rendered, while one language ships]*
 
 Reachable from three places — the Home header, Settings, and the pre-exam screen. (PRD R7 is worded to match: available from those three, locked for the duration of an attempt.) Switching is **instant and total** — question text, options, explanations, sign names and every UI string change together, with no reload and no lost position.
 

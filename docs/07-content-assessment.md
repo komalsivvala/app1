@@ -1,6 +1,8 @@
 # Content assessment — the supplied CSV / PDF dataset
 
-**Date:** 20 Sep 2026 · **Verdict:** structurally excellent, **not shippable as-is** — one blocker
+**Date:** 20 Sep 2026 · **Verdict:** structurally excellent; **shippable as English-only v1** (PRD Amendment A1, 21 Sep 2026)
+
+> **Decision taken 21 Sep 2026:** v1 ships English-only. §2 below is kept as written because it is the record of *why*; the gates now pass under `--strict` because `src/content/content-config.json` lists `["en"]`. Adding `"te"` re-arms every Telugu check.
 **Tested with:** `pipeline/02_ingest_csv.py` → `05_validate.py` → `06_emit.py`, plus `pipeline/test_pipeline.py`
 
 ---
@@ -15,7 +17,7 @@
 | `LLR_State_Profiles.csv` | 36 | Format/fees reference. Contains a major Phase 0 finding — see §5 |
 | `LLR_Question_Bank_StateWise.pdf` | 82 pp | Provenance, conflict register, category coverage |
 
-## 2. The blocker: there is no Telugu
+## 2. ~~The blocker~~ Resolved by A1: there is no Telugu
 
 **0 Telugu codepoints across all 119,277 characters of the dataset.** Every file is English-only.
 
@@ -224,8 +226,8 @@ insertion at position 1 shifts nothing, and cosmetic reformatting mints nothing.
 
 ## 9. What I need from you
 
-1. **Telugu — pick a path (§2).** Nothing ships without this. Option 1 (get the AP Telugu PDFs)
-   keeps the plan intact.
+1. ~~**Telugu — pick a path (§2).**~~ **Decided: English-only v1 (PRD A1).** Telugu is v1.1;
+   option 1 (the AP Telugu PDFs) is still the route there.
 2. **Timing — `per-question` or `whole-paper` 600 s (§5)?** One line either way.
 3. **Confirm: use `LLR_Andhra_Pradesh.csv`, not the master (§4).**
 4. **Accept the store-listing wording change (§3)** — "Telangana's published bank, which AP

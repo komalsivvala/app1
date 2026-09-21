@@ -3,6 +3,8 @@
 **Setup:** Solo developer + Claude Code · **Target:** ~4 weeks to submission
 **Status:** Draft v2 · **Date:** 21 Sep 2026
 
+> **[A1 — English-only v1, 21 Sep 2026]** Telugu is deferred to v1.1 by PRD Amendment A1. Edits below are marked `[A1]`; the Telugu specification is retained verbatim for v1.1, not deleted.
+
 ---
 
 ## 0. Read this before anything else
@@ -61,7 +63,7 @@ Telugu PDF extraction either works or it doesn't. If it produces mojibake and OC
 - [ ] `02_extract.py` — pdfplumber table extraction → raw JSON per (topic, language)
 - [ ] Eyeball the English output against the PDF by hand for 10 questions
 
-**Day 2 — the Telugu gate 🚨**
+**Day 2 — the Telugu gate 🚨** *[A1: not reached — no Telugu source obtained. Re-runs at v1.1.]*
 - [ ] Run `G-TELUGU`: ≥90% of characters in each Telugu string inside U+0C00–U+0C7F
 - [ ] **If it fails:** Tesseract `tel` OCR fallback, then a human-review queue
 - [ ] **If OCR also fails:** stop and reassess. Options are manual transcription of ~250 questions, or English-only v1 with Telugu in v1.1. Do not proceed on the assumption it'll be fine later.
@@ -185,7 +187,7 @@ Give yourself two days here. A one-day window with submission the next morning m
 |---|---|---|
 | **Play registered as personal account** | **+2 weeks minimum** | Register as organization on day 0. This is the single highest-leverage decision in the plan. |
 | **Apple enrolment stuck** | +2–6 weeks | Start day 0. Ship Android first if it drags; the codebase doesn't care. |
-| **Telugu extraction fails** | Project-shaping | Day-2 gate. OCR fallback. Predefined fallback: English-only v1, Telugu v1.1. |
+| **Telugu extraction fails** | Project-shaping | Day-2 gate. OCR fallback. Predefined fallback: English-only v1, Telugu v1.1. **← Fallback invoked 21 Sep 2026 (PRD A1).** |
 | **Store rejection for government affiliation** | +1–2 weeks | Over-comply on day 24. Budget for one rejection cycle. |
 | **Exam format wrong** | Credibility | Config-driven; RTO visit day 26; format date shown in-app. |
 | **Explanations slip** | Quality | Started day 20, not day 27. Ship with `legalRef: null` rather than invented citations. |
@@ -211,4 +213,4 @@ Everything on this list is **P0.5 in the PRD**, not free scope. Cutting any of i
 4. Process guide *(R10; the information exists on the official portal)*
 5. Dark mode *(R12; ship light-only — halves the screenshot matrix too)*
 
-**Never cut:** R1–R4 (the exam engine, the verified bilingual bank, the explanations, the post-exam review), R11 (offline), or Telugu. Those are the product. Everything else is furniture.
+**Never cut:** R1–R4 (the exam engine, the verified ~~bilingual~~ bank, the explanations, the post-exam review), R11 (offline)~~, or Telugu~~ *[A1: Telugu deferred to v1.1 by amendment, not cut quietly — see PRD Amendments]*. Those are the product. Everything else is furniture.
