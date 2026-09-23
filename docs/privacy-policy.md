@@ -10,7 +10,7 @@ Effective: 21 September 2026 · Version 1.0
 
 ## The short version
 
-The app collects no personal data. It has no account, no analytics, no advertising, no crash reporting and no third-party SDKs. Nothing you do in the app — answers, scores, bookmarks, settings — is sent anywhere. It all stays on your phone, and deleting the app deletes it.
+The app collects no personal data. It has no account, no analytics, no advertising, no crash reporting and no third-party SDKs. Nothing you do in the app — answers, scores, bookmarks, settings — is sent anywhere. It all stays on your phone, and deleting the app deletes it. The app never uses the internet unless you tap "Check for updates" in Settings.
 
 ## What the app stores, and where
 
@@ -27,9 +27,9 @@ Your phone's own backup service (Google backup on Android, iCloud backup on iOS)
 
 ## Network use
 
-The app works entirely offline and makes no requests of its own. One exception exists, and we would rather explain it than hide it:
+The app works entirely offline and never contacts the internet on its own. There is exactly one exception, and it only happens when you ask for it:
 
-- **Update check after a crash.** The app is built with Expo, and can download a fixed version of its own code if a previous launch failed (`expo-updates`, set to check only on error recovery — never on a normal launch). That check contacts Expo's update service. Like any internet request, it necessarily reveals your device's IP address to that service, together with the app's version and platform. The app sends no identifier of yours and nothing about your use of it. Expo's handling of that request is described in Expo's privacy policy at <https://expo.dev/privacy>.
+- **Content updates you request.** Settings has a "Check for updates" button. When you tap it, the app asks Expo's update service (the app is built with Expo, using `expo-updates`) whether a newer question bank or a correction is available, and downloads it if so. Like any internet request, that necessarily reveals your device's IP address to the service, together with the app's version and platform. The app sends no identifier of yours and nothing about your use of it, and it never checks automatically — not on launch, not in the background, not after a crash. Expo's handling of that request is described in Expo's privacy policy at <https://expo.dev/privacy>.
 
 The app declares the Android `INTERNET` permission for that single purpose. It requests **no runtime permissions**: no camera, microphone, location, contacts, storage, or notifications.
 

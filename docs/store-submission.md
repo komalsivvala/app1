@@ -16,10 +16,27 @@ Owner: Visweswar. Milestone M7. Last revised: 21 September 2026.
 | B1 | **Exam format verified at an RTO** (`exam-config.json` → `formatVerifiedOn`). Until then the app tells users the format is unconfirmed — a reviewer will read that too | Visweswar | ☐ |
 | B2 | **GitHub Pages enabled** for `docs/` on the default branch, so <https://komalsivvala.github.io/app1/privacy-policy/> resolves. Both listings and the About screen link to it | Visweswar (repo Settings → Pages → Deploy from a branch → `main` / `docs`) | ☐ |
 | B3 | **Support email** — replace `{{SUPPORT_EMAIL}}` in `docs/privacy-policy.md`, set `supportEmail` in `src/config/links.ts` (About screen shows "Report a wrong answer" only when set). Play requires a developer email; Apple a support URL (the Pages site is fine) | Visweswar | ☐ |
-| B4 | **EAS Update decision** — either `eas update:configure` (adds `updates.url` and `extra.eas.projectId`; keeps the crash-recovery update path the privacy policy describes) **or** set `updates.enabled: false` in `app.json` and delete the "Network use" exception from the privacy policy. Do not ship the current half-state | Visweswar | ☐ |
+| B4 | **EAS Update decision — decided: manual, user-initiated (option 3).** `checkAutomatically: NEVER`; Settings has a "Check for updates" button that is the app's only network request. Remaining: `eas init` and `eas update:configure` with your Expo account, which write `updates.url` and `extra.eas.projectId` into `app.json` (until then the button reads "Not available in this build") | Visweswar | ☐ config |
 | B5 | **Guide values confirmed on Sarathi** (fees, ages, validity) and `lastVerified` updated in `src/content/guide.json` | Visweswar | ☐ |
 | B6 | **Ten real users** complete a mock on a physical device (plan Day 26–27); the 200% text-size check on a device (plan Day 22) | Visweswar | ☐ |
 | B7 | Developer accounts: Google Play Console (one-time fee), Apple Developer Program (annual) | Visweswar | ☐ |
+
+### 0.1 Step by step
+
+**B7 — accounts (start first; lead times).**
+1. Expo: free account at expo.dev; `npm i -g eas-cli && eas login`; in the repo `eas init` (writes `extra.eas.projectId`), then `eas update:configure` (writes `updates.url`). Commit both.
+2. Google Play Console: register (one-time fee), complete identity verification. **Personal accounts created after Nov 2023 must run a closed test — minimum tester count (12, formerly 20; confirm in the console) opted in for 14 continuous days — before production access.** An organisation account skips that but needs a D-U-N-S number.
+3. Apple Developer Program (annual). Individual enrolment is quick; organisation enrolment needs D-U-N-S and takes days to weeks. Match the choice to the publisher name used in the listing copyright line.
+
+**B2 — Pages.** Merge to the default branch → repository Settings → Pages → Build and deployment → Source: Deploy from a branch → default branch, `/docs` → Save → wait for the Pages workflow → open <https://komalsivvala.github.io/app1/privacy-policy/>. Free-plan Pages require a public repository.
+
+**B3 — support email.** Choose a durable address → replace `{{SUPPORT_EMAIL}}` in `docs/privacy-policy.md` → set `supportEmail` in `src/config/links.ts` → `npm run check` → commit.
+
+**B5 — guide values.** On Sarathi and aptransport.org confirm: application fee per class, test fee, the three age limits, LL validity, wait before the DL test, Form 1 / Form 1A, the document list, test-from-home availability. Edit `src/content/guide.json`, set each `lastVerified` to the date checked → `npm run test:node` → commit.
+
+**B1 — RTO.** Sit at the test terminal or watch a candidate: count, pass mark, clock (per question or per paper, and the seconds), back navigation, skipping, negative marking, section split. Edit `src/content/exam-config.json`, set `formatVerifiedOn` → `npm run validate:config` → commit. The pre-exam banner disappears by itself.
+
+**B6 — device tests.** `eas build --profile preview --platform android` (APK link) and `... --platform ios` + `eas submit` to a TestFlight **internal** group. Ten AP candidates complete a mock unaided while you watch; note every hesitation. On one phone set text size to maximum and walk every screen. Read Play's reported download size and time a cold start on a 3 GB phone. Fix, rebuild, repeat; two days.
 
 ---
 
@@ -38,8 +55,7 @@ The app is an independent study aid. It is not developed by, for, or with the Tr
 Reasoning, recorded per `02-TRD.md` §11:
 
 - Nothing the user does is transmitted anywhere. No analytics, crash, ad or any third-party SDK is present (auditable: `package.json`, and the Android export's module list).
-- The one network request the app can make is the `expo-updates` check, restricted to `ON_ERROR_RECOVERY`, i.e. only after a failed launch. That request carries the device IP address and app version/platform to Expo's update service as transport metadata for that single request. Play's Data safety definitions treat data that is processed only to service a request in real time and not retained as **ephemeral processing**, which does not need to be declared as collection. The app sends no user identifier, no usage data and no content. **Re-read the current Data safety definitions of "collection" and "ephemeral processing" when filing;** if they have changed, declare "Device or other IDs: IP address — collected, not shared, app functionality, not optional" and link Expo's policy.
-- If B4 is resolved by disabling updates, the app makes no network requests at all and the answer is "No" without qualification.
+- The one network request the app can make is the `expo-updates` check, and it runs **only when the user taps "Check for updates" in Settings** (`checkAutomatically: NEVER`; `src/updates/`). That request carries the device IP address and app version/platform to Expo's update service as transport metadata for that single request. Because the user initiates it, it is also a disclosed, optional action rather than background collection. Play's Data safety definitions treat data that is processed only to service a request in real time and not retained as **ephemeral processing**, which does not need to be declared as collection. The app sends no user identifier, no usage data and no content. **Re-read the current Data safety definitions of "collection" and "ephemeral processing" when filing;** if they have changed, declare "Device or other IDs: IP address — collected, not shared, app functionality, not optional" and link Expo's policy.
 - Security practices: "Data is encrypted in transit" — not applicable (nothing is transmitted); "Users can request that data be deleted" — not applicable, and Reset progress deletes everything locally.
 
 ### 1.3 Apple — App Privacy ("nutrition label")
@@ -77,7 +93,7 @@ Note on India's DPDP Act 2023, which defines a child as under 18: the app proces
 >
 > Content: the questions are the ones the state transport department publishes for candidates to study (linked from the About screen); the explanations and all road-sign artwork are our own, drawn to the Indian Roads Congress conventions. No government logos, emblems or seals are used anywhere.
 >
-> The app collects no data (App Privacy: Data Not Collected). It requests no permissions. It can download a fix to its own code only after a crashed launch (expo-updates, error-recovery mode); that is the only network access.
+> The app collects no data (App Privacy: Data Not Collected). It requests no permissions. Its only network access is a content-update check the user starts by tapping "Check for updates" in Settings (expo-updates, automatic checks disabled).
 
 ### 1.7 Icon audit (plan Day 24)
 
