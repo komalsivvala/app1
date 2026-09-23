@@ -176,7 +176,19 @@
       "confirmBody": "This deletes every test result, statistic and bookmark on this phone. It cannot be undone.",
       "confirm": "Delete everything"
     },
-    "about": "About this app"
+    "about": "About this app",
+    "updates": {
+      "label": "Content updates",
+      "version": "Question bank version {{version}}",
+      "hint": "Nothing is checked automatically. Tap to ask for a newer question bank or corrections; that is the only time the app uses the internet.",
+      "unavailable": "Not available in this build.",
+      "idle": "Check for updates",
+      "checking": "Checking…",
+      "upToDate": "Up to date — check again",
+      "downloading": "Downloading…",
+      "ready": "Restart to apply the update",
+      "error": "Couldn't check — try again"
+    }
   },
   "about": {
     "title": "About",

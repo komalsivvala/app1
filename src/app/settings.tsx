@@ -2,15 +2,19 @@ import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
 
 import { AppText } from '@/components/AppText';
+import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Segmented } from '@/components/Segmented';
+import { CONTENT } from '@/content/questions';
 import { useDb } from '@/db/provider';
 import { AVAILABLE_LANGUAGES } from '@/i18n';
 import { useI18n } from '@/i18n/use-i18n';
 import { usePrefs, type ThemePref } from '@/state/prefs';
+import { isActionable } from '@/updates/state';
+import { useContentUpdates } from '@/updates/use-content-updates';
 
 const THEME_OPTIONS: readonly ThemePref[] = ['system', 'light', 'dark'];
 
@@ -19,6 +23,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const db = useDb();
   const { themePref, setThemePref } = usePrefs();
+  const updates = useContentUpdates();
 
   const resetProgress = () => {
     Alert.alert(t('settings.resetProgress.confirmTitle'), t('settings.resetProgress.confirmBody'), [
@@ -64,6 +69,23 @@ export default function SettingsScreen() {
         <AppText variant="caption" color="secondary">
           {t('settings.textSize.hint')}
         </AppText>
+      </Card>
+
+      <Card testID="settings-updates">
+        <AppText variant="heading">{t('settings.updates.label')}</AppText>
+        <AppText variant="caption" color="secondary">
+          {t('settings.updates.version', { version: CONTENT.contentVersion })}
+        </AppText>
+        <AppText variant="caption" color="secondary">
+          {t('settings.updates.hint')}
+        </AppText>
+        {updates.status === 'unavailable' ? (
+          <AppText variant="caption" color="secondary" testID="settings-updates-unavailable">
+            {t('settings.updates.unavailable')}
+          </AppText>
+        ) : (
+          <Button.Secondary label={t(`settings.updates.${updates.status}`)} onPress={updates.press} disabled={!isActionable(updates.status)} testID="settings-updates-button" />
+        )}
       </Card>
 
       <Card onPress={resetProgress} accessibilityLabel={t('settings.resetProgress.label')} accessibilityHint={t('settings.resetProgress.confirmBody')}>
